@@ -1,0 +1,21 @@
+body {
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+.screen {
+    max-width: 600px;
+    margin: auto;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#choices button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+}

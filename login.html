@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ログイン</title>
+</head>
+<body>
+  <h2>ログイン</h2>
+
+  <input id="email" type="email" placeholder="メールアドレスを入力">
+  <button onclick="login()">ログイン</button>
+
+  <p id="msg"></p>
+
+<script>
+function login() {
+  const email = document.getElementById("email").value;
+  const msg = document.getElementById("msg");
+
+  if (!email.endsWith("@ikuei.ac.jp")) {
+    msg.textContent = "ikuei.ac.jp のメールアドレスのみ利用できます。";
+    return;
+  }
+
+  // ✅ ログイン成功 → localStorage に保存
+  localStorage.setItem("loggedIn", "true");
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
+
