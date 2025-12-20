@@ -27,29 +27,28 @@
       text-align: center;
     }
 
-    h2 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-
-    .item-btn {
+    select, button {
       width: 100%;
       padding: 1rem;
       font-size: 1.1rem;
       margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
       background-color: #28a745;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
 
-    .item-btn:hover {
+    button:hover {
       background-color: #1e7e34;
     }
 
     .back-btn {
-      margin-top: 1rem;
       background-color: #6c757d;
     }
 
@@ -60,42 +59,94 @@
 </head>
 <body>
 
-  <script>
-    // ✅ 未ログインならログイン画面へ戻す
-    if (localStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "login.html";
+<script>
+  // ✅ 未ログインならログイン画面へ戻す
+  if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
+<div class="container">
+  <h2>項目別学習モード</h2>
+
+  <select id="subject">
+    <option value="">科目を選択</option>
+  </select>
+
+  <select id="chapter">
+    <option value="">項目を選択</option>
+  </select>
+
+  <button onclick="startQuiz()">学習を開始</button>
+  <button class="back-btn" onclick="location.href='mode.html'">戻る</button>
+</div>
+
+<script>
+  let quizData = [];
+
+  // ✅ quizzes.json を読み込む
+  fetch("quizzes.json")
+    .then(res => res.json())
+    .then(data => {
+      quizData = data;
+      populateSubjects();
+    });
+
+  // ✅ 科目一覧を自動生成
+  function populateSubjects() {
+    const subjectSelect = document.getElementById("subject");
+
+    const subjects = [...new Set(quizData.map(q => q.subject))];
+
+    subjects.forEach(sub => {
+      const option = document.createElement("option");
+      option.value = sub;
+      option.textContent = sub;
+      subjectSelect.appendChild(option);
+    });
+
+    subjectSelect.addEventListener("change", populateChapters);
+  }
+
+  // ✅ 科目に応じて項目一覧を自動生成
+  function populateChapters() {
+    const subject = document.getElementById("subject").value;
+    const chapterSelect = document.getElementById("chapter");
+
+    chapterSelect.innerHTML = "<option value=''>項目を選択</option>";
+
+    const chapters = [
+      ...new Set(
+        quizData
+          .filter(q => q.subject === subject)
+          .map(q => q.chapter)
+      )
+    ];
+
+    chapters.forEach(ch => {
+      const option = document.createElement("option");
+      option.value = ch;
+      option.textContent = ch;
+      chapterSelect.appendChild(option);
+    });
+  }
+
+  // ✅ 学習開始
+  function startQuiz() {
+    const subject = document.getElementById("subject").value;
+    const chapter = document.getElementById("chapter").value;
+
+    if (!subject || !chapter) {
+      alert("科目と項目を選択してください。");
+      return;
     }
-  </script>
 
-  <div class="container">
-    <h2>項目別学習モード</h2>
+    localStorage.setItem("subject", subject);
+    localStorage.setItem("chapter", chapter);
 
-    <!-- ✅ 学習項目のボタン（必要に応じて増やせる） -->
-    <button class="item-btn" onclick="selectItem('math')">医療概論</button>
-    <button class="item-btn" onclick="selectItem('english')">公衆衛生学</button>
-    <button class="item-btn" onclick="selectItem('science')">関係法規</button>
-    <button class="item-btn" onclick="selectItem('social')">解剖学</button>
-    <button class="item-btn" onclick="selectItem('social')">生理学</button>
-    <button class="item-btn" onclick="selectItem('social')">病理学</button>
-    <button class="item-btn" onclick="selectItem('social')">臨床医学総論</button>
-    <button class="item-btn" onclick="selectItem('social')">臨床医学各論</button>
-    <button class="item-btn" onclick="selectItem('social')">リハビリテーション医学</button>
-    <button class="item-btn" onclick="selectItem('social')">東洋医学概論</button>
-    <button class="item-btn" onclick="selectItem('social')">経絡経穴概論</button>
-    <button class="item-btn" onclick="selectItem('social')">東洋医学臨床論</button>
-    <button class="item-btn" onclick="selectItem('social')">はり理論</button>
-    <button class="item-btn" onclick="selectItem('social')">きゅう理論</button>
-    
-    <button class="item-btn back-btn" onclick="location.href='mode.html'">戻る</button>
-  </div>
-
-  <script>
-    function selectItem(category) {
-      // ✅ 選んだ項目を保存して問題画面へ
-      localStorage.setItem("studyCategory", category);
-      window.location.href = "quiz.html";  // ← 次に作る問題画面
-    }
-  </script>
+    window.location.href = "quiz.html";
+  }
+</script>
 
 </body>
 </html>
