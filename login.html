@@ -81,8 +81,7 @@
       const msg = document.getElementById("msg");
 
       if (!email.endsWith("@ikuei.ac.jp")) {
-        msg.textContent = "ikuei.ac.jp のメールアドレスのみ利用できます。";
-        return;
+        msg.textContent = "許可されたメールアドレスを入力してください。"
       }
 
       localStorage.setItem("loggedIn", "true");
