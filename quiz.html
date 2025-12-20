@@ -127,7 +127,10 @@
 <body>
 
 <div class="container" id="quizScreen">
+
+  <!-- ✅ 進捗表示 -->
   <p id="progressText" style="font-weight:bold; margin-bottom:0.5rem;"></p>
+
   <h2 id="questionText">読み込み中...</h2>
 
   <div id="options"></div>
@@ -191,6 +194,10 @@
   // ✅ 問題を表示
   function showQuestion() {
     const q = filteredQuestions[currentIndex];
+
+    // ✅ 進捗表示
+    document.getElementById("progressText").textContent =
+      `第${currentIndex + 1}問 / 全${filteredQuestions.length}問中`;
 
     document.getElementById("questionText").textContent =
       `【${currentIndex + 1}問目】 ${q.question}`;
