@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ログイン</title>
+  <title>sumamon_MCQ・ログイン</title>
   <style>
     body {
       font-family: sans-serif;
@@ -14,41 +14,45 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow-x: hidden; /* ← 横スクロール防止 */
     }
 
     .container {
       background-color: white;
-      padding: 2rem;
+      padding: 1.5rem; /* ← スマホ向けに縮小 */
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       width: 90%;
-      max-width: 380px; /* ← スマホで絶対はみ出さない */
+      max-width: 360px; /* ← スマホ幅に最適化 */
+      box-sizing: border-box; /* ← padding を含めて幅計算 */
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+      font-size: 1.5rem;
     }
 
     input[type="email"] {
       width: 100%;
-      padding: 1rem;
-      font-size: 1.2rem;
+      padding: 0.9rem;
+      font-size: 1.1rem;
       margin-bottom: 1.2rem;
       border: 1px solid #ccc;
       border-radius: 6px;
+      box-sizing: border-box;
     }
 
     button {
       width: 100%;
       padding: 1rem;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       background-color: #007bff;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      box-sizing: border-box;
     }
 
     button:hover {
@@ -59,13 +63,13 @@
       margin-top: 1rem;
       color: red;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>ログイン</h2>
+    <h2>sumamon_MCQ・ログイン</h2>
     <input id="email" type="email" placeholder="メールアドレスを入力">
     <button onclick="login()">ログイン</button>
     <p id="msg"></p>
