@@ -14,6 +14,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .container {
@@ -25,6 +26,7 @@
       max-width: 380px;
       box-sizing: border-box;
       text-align: center;
+      margin: 0 auto;
     }
 
     select, button {
@@ -84,6 +86,24 @@
 <script>
   let quizData = [];
 
+  // ✅ 国家試験の科目順
+  const subjectOrder = [
+    "医療概論",
+    "公衆衛生学",
+    "関係法規",
+    "解剖学",
+    "生理学",
+    "病理学",
+    "臨床医学総論",
+    "臨床医学各論",
+    "リハビリテーション医学",
+    "東洋医学概論",
+    "経絡経穴概論",
+    "東洋医学臨床論",
+    "はり理論",
+    "きゅう理論"
+  ];
+
   // ✅ quizzes.json を読み込む
   fetch("quizzes.json")
     .then(res => res.json())
@@ -92,12 +112,19 @@
       populateSubjects();
     });
 
-  // ✅ 科目一覧を自動生成
+  // ✅ 科目一覧を自動生成（国家試験順に並べる）
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
 
-    const subjects = [...new Set(quizData.map(q => q.subject))];
+    // JSON から科目一覧を取得
+    let subjects = [...new Set(quizData.map(q => q.subject))];
 
+    // ✅ 並び順を固定
+    subjects.sort((a, b) => {
+      return subjectOrder.indexOf(a) - subjectOrder.indexOf(b);
+    });
+
+    // ✅ プルダウンに追加
     subjects.forEach(sub => {
       const option = document.createElement("option");
       option.value = sub;
