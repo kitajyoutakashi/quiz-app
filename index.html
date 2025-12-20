@@ -64,7 +64,7 @@
 <body>
   <div class="container">
     <h2>ログイン</h2>
-    <input id="email" type="email" placeholder="ikuei.ac.jp のメールアドレスを入力">
+    <input id="email" type="email" placeholder="ikueiのメールアドレスを入力">
     <button onclick="login()">ログイン</button>
     <p id="msg"></p>
   </div>
@@ -74,8 +74,8 @@
       const email = document.getElementById("email").value;
       const msg = document.getElementById("msg");
 
-      if (!email.endsWith("@ikuei.ac.jp")) {
-        msg.textContent = "ikuei.ac.jp のメールアドレスのみ利用できます。";
+      if (!email.endsWith("ikuei@gunei.ac.jp")) {
+        msg.textContent = "メールアドレスがエラーです";
         return;
       }
 
