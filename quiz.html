@@ -31,11 +31,12 @@
       margin-bottom: 1rem;
     }
 
+    /* ✅ 選択肢ボタンを緑に変更 */
     .option {
       width: 100%;
       padding: 1rem;
       margin-bottom: 1rem;
-      background-color: #007bff;
+      background-color: #28a745; /* 緑 */
       color: white;
       border: none;
       border-radius: 6px;
@@ -44,7 +45,7 @@
     }
 
     .option:hover {
-      background-color: #0056b3;
+      background-color: #1e7e34; /* 濃い緑 */
     }
 
     .correct {
@@ -234,7 +235,7 @@
     judge.style.display = "block";
 
     const exp = document.getElementById("explanation");
-    exp.innerHTML = q.explanation;
+    exp.innerHTML = q.explanation;  /* ✅ 丸数字を正しく表示 */
     exp.classList.add("fade-in");
     exp.style.display = "block";
 
