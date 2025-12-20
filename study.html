@@ -112,19 +112,16 @@
       populateSubjects();
     });
 
-  // ✅ 科目一覧を自動生成（国家試験順に並べる）
+  // ✅ 科目一覧を自動生成（国家試験順）
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
 
-    // JSON から科目一覧を取得
     let subjects = [...new Set(quizData.map(q => q.subject))];
 
-    // ✅ 並び順を固定
     subjects.sort((a, b) => {
       return subjectOrder.indexOf(a) - subjectOrder.indexOf(b);
     });
 
-    // ✅ プルダウンに追加
     subjects.forEach(sub => {
       const option = document.createElement("option");
       option.value = sub;
@@ -135,20 +132,31 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
-  // ✅ 科目に応じて項目一覧を自動生成
+  // ✅ 項目一覧をカテゴリ順に並べる
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterSelect = document.getElementById("chapter");
 
     chapterSelect.innerHTML = "<option value=''>項目を選択</option>";
 
-    const chapters = [
+    let chapters = [
       ...new Set(
         quizData
           .filter(q => q.subject === subject)
           .map(q => q.chapter)
       )
     ];
+
+    // ✅ カテゴリ（chapter の最初の「〇〇・」部分）でソート
+    chapters.sort((a, b) => {
+      const categoryA = a.split("・")[0];
+      const categoryB = b.split("・")[0];
+
+      if (categoryA < categoryB) return -1;
+      if (categoryA > categoryB) return 1;
+
+      return a.localeCompare(b, "ja");
+    });
 
     chapters.forEach(ch => {
       const option = document.createElement("option");
