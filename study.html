@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>項目別学習モード</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 380px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .item-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .item-btn:hover {
+      background-color: #1e7e34;
+    }
+
+    .back-btn {
+      margin-top: 1rem;
+      background-color: #6c757d;
+    }
+
+    .back-btn:hover {
+      background-color: #545b62;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    // ✅ 未ログインならログイン画面へ戻す
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <div class="container">
+    <h2>項目別学習モード</h2>
+
+    <!-- ✅ 学習項目のボタン（必要に応じて増やせる） -->
+    <button class="item-btn" onclick="selectItem('math')">医療概論</button>
+    <button class="item-btn" onclick="selectItem('english')">公衆衛生学</button>
+    <button class="item-btn" onclick="selectItem('science')">関係法規</button>
+    <button class="item-btn" onclick="selectItem('social')">解剖学</button>
+    <button class="item-btn" onclick="selectItem('social')">生理学</button>
+    <button class="item-btn" onclick="selectItem('social')">病理学</button>
+    <button class="item-btn" onclick="selectItem('social')">臨床医学総論</button>
+    <button class="item-btn" onclick="selectItem('social')">臨床医学各論</button>
+    <button class="item-btn" onclick="selectItem('social')">リハビリテーション医学</button>
+    <button class="item-btn" onclick="selectItem('social')">東洋医学概論</button>
+    <button class="item-btn" onclick="selectItem('social')">経絡経穴概論</button>
+    <button class="item-btn" onclick="selectItem('social')">東洋医学臨床論</button>
+    <button class="item-btn" onclick="selectItem('social')">はり理論</button>
+    <button class="item-btn" onclick="selectItem('social')">きゅう理論</button>
+    
+    <button class="item-btn back-btn" onclick="location.href='mode.html'">戻る</button>
+  </div>
+
+  <script>
+    function selectItem(category) {
+      // ✅ 選んだ項目を保存して問題画面へ
+      localStorage.setItem("studyCategory", category);
+      window.location.href = "quiz.html";  // ← 次に作る問題画面
+    }
+  </script>
+
+</body>
+</html>
