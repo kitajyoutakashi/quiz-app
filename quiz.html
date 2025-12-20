@@ -55,6 +55,31 @@
       background-color: #dc3545 !important;
     }
 
+    /* ✅ フェードインアニメーション */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #judgeText {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+
+    .correctText {
+      color: #d9534f; /* 赤 */
+    }
+
+    .wrongText {
+      color: #0275d8; /* 青 */
+    }
+
     #explanation {
       margin-top: 1rem;
       padding: 1rem;
@@ -105,6 +130,7 @@
 
   <div id="options"></div>
 
+  <div id="judgeText"></div>
   <div id="explanation"></div>
 
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
@@ -121,7 +147,7 @@
   let quizData = [];
   let filteredQuestions = [];
   let currentIndex = 0;
-  let correctCount = 0;  // ✅ 正解数
+  let correctCount = 0;
 
   const subject = localStorage.getItem("subject");
   const chapter = localStorage.getItem("chapter");
@@ -146,12 +172,10 @@
     .then(data => {
       quizData = data;
 
-      // ✅ 科目 + 項目で絞り込み
       filteredQuestions = quizData.filter(q =>
         q.subject === subject && q.chapter === chapter
       );
 
-      // ✅ ランダム並び替え
       filteredQuestions = shuffle(filteredQuestions);
 
       if (filteredQuestions.length === 0) {
@@ -180,11 +204,12 @@
       optionsDiv.appendChild(btn);
     });
 
+    document.getElementById("judgeText").style.display = "none";
     document.getElementById("explanation").style.display = "none";
     document.getElementById("nextBtn").style.display = "none";
   }
 
-  // ✅ 正誤判定
+  // ✅ 正誤判定（フェードイン付き）
   function checkAnswer(selectedIndex) {
     const q = filteredQuestions[currentIndex];
     const optionButtons = document.querySelectorAll(".option");
@@ -195,13 +220,22 @@
       if (i === selectedIndex && i !== q.correctIndex) btn.classList.add("wrong");
     });
 
-    // ✅ 正解ならカウント
+    const judge = document.getElementById("judgeText");
+
     if (selectedIndex === q.correctIndex) {
+      judge.textContent = "正解！";
+      judge.className = "correctText fade-in";
       correctCount++;
+    } else {
+      judge.textContent = "不正解…";
+      judge.className = "wrongText fade-in";
     }
+
+    judge.style.display = "block";
 
     const exp = document.getElementById("explanation");
     exp.textContent = q.explanation;
+    exp.classList.add("fade-in");
     exp.style.display = "block";
 
     document.getElementById("nextBtn").style.display = "block";
@@ -221,11 +255,8 @@
 
   // ✅ 結果表示
   function showResult() {
-    const quizScreen = document.getElementById("quizScreen");
-    const resultScreen = document.getElementById("resultScreen");
-
-    quizScreen.style.display = "none";
-    resultScreen.style.display = "block";
+    document.getElementById("quizScreen").style.display = "none";
+    document.getElementById("resultScreen").style.display = "block";
 
     const total = filteredQuestions.length;
     const rate = Math.round((correctCount / total) * 100);
