@@ -1,32 +1,89 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>ログイン</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>ログイン</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 95%;
+      max-width: 500px; /* ← スマホでも大きく見える */
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.6rem; /* ← 大きめ */
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 1rem; /* ← 大きめ */
+      font-size: 1.2rem; /* ← 大きめ */
+      margin-bottom: 1.2rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.3rem; /* ← 大きめ */
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #msg {
+      margin-top: 1rem;
+      color: red;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
-  <h2>ログイン</h2>
+  <div class="container">
+    <h2>ログイン</h2>
+    <input id="email" type="email" placeholder="ikuei.ac.jp のメールアドレスを入力">
+    <button onclick="login()">ログイン</button>
+    <p id="msg"></p>
+  </div>
 
-  <input id="email" type="email" placeholder="メールアドレスを入力">
-  <button onclick="login()">ログイン</button>
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const msg = document.getElementById("msg");
 
-  <p id="msg"></p>
+      if (!email.endsWith("@ikuei.ac.jp")) {
+        msg.textContent = "ikuei.ac.jp のメールアドレスのみ利用できます。";
+        return;
+      }
 
-<script>
-function login() {
-  const email = document.getElementById("email").value;
-  const msg = document.getElementById("msg");
-
-  if (!email.endsWith("@ikuei.ac.jp")) {
-    msg.textContent = "ikuei.ac.jp のメールアドレスのみ利用できます。";
-    return;
-  }
-
-  // ✅ ログイン成功 → localStorage に保存
-  localStorage.setItem("loggedIn", "true");
-  window.location.href = "index.html";
-}
-</script>
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "index.html";
+    }
+  </script>
 </body>
 </html>
-
