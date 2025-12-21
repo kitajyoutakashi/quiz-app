@@ -49,6 +49,7 @@
       border-radius:6px;
       display:none;
       cursor:pointer;
+      margin-top:1rem;
     }
 
     /* ✅ 正解・不正解の表示 */
@@ -80,10 +81,13 @@
   <p id="progress"></p>
   <h2 id="questionText"></h2>
 
-  <div id="judgeText" style="display:none;"></div>
-
+  <!-- ✅ 選択肢 -->
   <div id="options"></div>
 
+  <!-- ✅ 正解／不正解（選択肢の下に移動） -->
+  <div id="judgeText" style="display:none;"></div>
+
+  <!-- ✅ 解説（judgeText の下） -->
   <div id="explanation"></div>
 
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
