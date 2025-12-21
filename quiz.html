@@ -294,6 +294,23 @@
     localStorage.removeItem("lastSubject");
     localStorage.removeItem("lastChapter");
     localStorage.removeItem("lastIndex");
+
+    // ✅ 履歴保存
+    const keyBase = `${subject}_${chapter}`;
+    
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+    const yyyymmdd = `${y}${m}${d}`;
+    
+    localStorage.setItem(`lastDate_${keyBase}`, yyyymmdd);
+    localStorage.setItem(`lastRate_${keyBase}`, rate);
+    
+    // ✅ 回数カウント
+    const prevCount = Number(localStorage.getItem(`lastCount_${keyBase}`) || 0);
+    localStorage.setItem(`lastCount_${keyBase}`, prevCount + 1);
+
   }
 </script>
 
