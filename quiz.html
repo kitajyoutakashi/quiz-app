@@ -31,12 +31,12 @@
       margin-bottom: 1rem;
     }
 
-    /* ✅ 選択肢ボタンを緑に変更 */
+    /* ✅ 選択肢ボタン（緑） */
     .option {
       width: 100%;
       padding: 1rem;
       margin-bottom: 1rem;
-      background-color: #28a745; /* 緑 */
+      background-color: #28a745;
       color: white;
       border: none;
       border-radius: 6px;
@@ -45,7 +45,7 @@
     }
 
     .option:hover {
-      background-color: #1e7e34; /* 濃い緑 */
+      background-color: #1e7e34;
     }
 
     .correct {
@@ -56,7 +56,7 @@
       background-color: #dc3545 !important;
     }
 
-    /* ✅ フェードインアニメーション */
+    /* ✅ フェードイン */
     .fade-in {
       animation: fadeIn 0.5s ease-in-out;
     }
@@ -74,11 +74,11 @@
     }
 
     .correctText {
-      color: #d9534f; /* 赤 */
+      color: #d9534f;
     }
 
     .wrongText {
-      color: #0275d8; /* 青 */
+      color: #0275d8;
     }
 
     #explanation {
@@ -162,7 +162,7 @@
     window.location.href = "study.html";
   }
 
-  // ✅ シャッフル関数
+  // ✅ シャッフル
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -171,7 +171,7 @@
     return array;
   }
 
-  // ✅ quizzes.json を読み込む
+  // ✅ quizzes.json 読み込み
   fetch("quizzes.json")
     .then(res => res.json())
     .then(data => {
@@ -188,10 +188,19 @@
         window.location.href = "study.html";
       }
 
+      // ✅ 前回の続きがあれば復元
+      const savedIndex = localStorage.getItem("lastIndex");
+      const savedSubject = localStorage.getItem("lastSubject");
+      const savedChapter = localStorage.getItem("lastChapter");
+
+      if (savedSubject === subject && savedChapter === chapter && savedIndex !== null) {
+        currentIndex = Number(savedIndex);
+      }
+
       showQuestion();
     });
 
-  // ✅ 問題を表示
+  // ✅ 問題表示
   function showQuestion() {
     const q = filteredQuestions[currentIndex];
 
@@ -216,9 +225,14 @@
     document.getElementById("judgeText").style.display = "none";
     document.getElementById("explanation").style.display = "none";
     document.getElementById("nextBtn").style.display = "none";
+
+    // ✅ 進捗保存
+    localStorage.setItem("lastSubject", subject);
+    localStorage.setItem("lastChapter", chapter);
+    localStorage.setItem("lastIndex", currentIndex);
   }
 
-  // ✅ 正誤判定（フェードイン付き）
+  // ✅ 正誤判定
   function checkAnswer(selectedIndex) {
     const q = filteredQuestions[currentIndex];
     const optionButtons = document.querySelectorAll(".option");
@@ -243,7 +257,7 @@
     judge.style.display = "block";
 
     const exp = document.getElementById("explanation");
-    exp.innerHTML = q.explanation;  /* ✅ 丸数字を正しく表示 */
+    exp.innerHTML = q.explanation;
     exp.classList.add("fade-in");
     exp.style.display = "block";
 
@@ -253,6 +267,9 @@
   // ✅ 次の問題へ
   function nextQuestion() {
     currentIndex++;
+
+    // ✅ 保存
+    localStorage.setItem("lastIndex", currentIndex);
 
     if (currentIndex >= filteredQuestions.length) {
       showResult();
@@ -272,6 +289,11 @@
 
     document.getElementById("scoreText").textContent =
       `正解数：${correctCount} / ${total}（正答率：${rate}%）`;
+
+    // ✅ 終了したら保存データ削除
+    localStorage.removeItem("lastSubject");
+    localStorage.removeItem("lastChapter");
+    localStorage.removeItem("lastIndex");
   }
 </script>
 
