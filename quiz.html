@@ -155,7 +155,7 @@
   <!-- ✅ 正答率100%のときだけ表示される -->
   <div id="perfectMessage">
     <div style="display:flex; align-items:flex-start; gap:10px; justify-content:center;">
-      <img src="soccer.png" alt="キャラ" style="width:80px; height:auto;">
+      <img id="perfectChar" src="ekiden.jpg" alt="キャラ" style="width:80px; height:auto;">
       <div style="
         background:#fff;
         border:2px solid #333;
@@ -246,7 +246,7 @@
       `【${currentIndex + 1}問目】 ${q.question}`;
 
     const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
+    optionsDiv.innerinnerHTML = "";
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement("button");
@@ -329,8 +329,20 @@
     document.getElementById("scoreText").textContent =
       `正解数：${correctCount} / ${total}（正答率：${rate}%）`;
 
-    // ✅ 正答率100%ならキャラ表示
+    // ✅ 正答率100%ならキャラをランダム表示
     if (rate === 100) {
+      const characters = [
+        "ekiden.jpg",
+        "keeper.png",
+        "baseball.png",
+        "ushiro_harimijikai_gray_ikume_.png",
+        "帽子なし野球ユニフォーム.png",
+        "陸上イクメちゃん.png"
+      ];
+
+      const randomChar = characters[Math.floor(Math.random() * characters.length)];
+      document.getElementById("perfectChar").src = randomChar;
+
       document.getElementById("perfectMessage").style.display = "block";
     }
 
