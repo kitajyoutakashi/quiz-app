@@ -31,7 +31,6 @@
       margin-bottom: 1rem;
     }
 
-    /* ✅ 選択肢ボタン（緑） */
     .option {
       width: 100%;
       padding: 1rem;
@@ -48,15 +47,9 @@
       background-color: #1e7e34;
     }
 
-    .correct {
-      background-color: #28a745 !important;
-    }
+    .correct { background-color: #28a745 !important; }
+    .wrong { background-color: #dc3545 !important; }
 
-    .wrong {
-      background-color: #dc3545 !important;
-    }
-
-    /* ✅ フェードイン */
     .fade-in {
       animation: fadeIn 0.5s ease-in-out;
     }
@@ -73,13 +66,8 @@
       display: none;
     }
 
-    .correctText {
-      color: #d9534f;
-    }
-
-    .wrongText {
-      color: #0275d8;
-    }
+    .correctText { color: #d9534f; }
+    .wrongText { color: #0275d8; }
 
     #explanation {
       margin-top: 1rem;
@@ -101,15 +89,9 @@
       display: none;
     }
 
-    /* ✅ 終了画面 */
     #resultScreen {
       display: none;
       text-align: center;
-    }
-
-    #resultScreen h2 {
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
     }
 
     #resultScreen button {
@@ -123,7 +105,6 @@
       cursor: pointer;
     }
 
-    /* ✅ 100%時のキャラ表示 */
     #perfectMessage {
       display: none;
       margin-top: 1.5rem;
@@ -133,46 +114,28 @@
 <body>
 
 <div class="container" id="quizScreen">
-
-  <!-- ✅ 進捗表示 -->
   <p id="progressText" style="font-weight:bold; margin-bottom:0.5rem;"></p>
-
   <h2 id="questionText">読み込み中...</h2>
-
   <div id="options"></div>
-
   <div id="judgeText"></div>
   <div id="explanation"></div>
-
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
 </div>
 
-<!-- ✅ 終了画面 -->
 <div class="container" id="resultScreen">
   <h2>結果</h2>
   <p id="scoreText"></p>
 
-  <!-- ✅ 正答率100%のときだけ表示される -->
   <div id="perfectMessage">
     <div style="display:flex; align-items:flex-start; gap:10px; justify-content:center;">
-      <img id="perfectChar" src="ekiden.jpg" alt="キャラ" style="width:80px; height:auto;">
+      <img id="perfectChar" src="" alt="キャラ" style="width:80px; height:auto; display:none;">
       <div style="
-        background:#fff;
-        border:2px solid #333;
-        border-radius:10px;
-        padding:10px;
-        position:relative;
-        max-width:200px;
-        font-weight:bold;
+        background:#fff; border:2px solid #333; border-radius:10px;
+        padding:10px; position:relative; max-width:200px; font-weight:bold;
       ">
         やったね！
         <div style="
-          content:'';
-          position:absolute;
-          left:-10px;
-          top:20px;
-          width:0;
-          height:0;
+          position:absolute; left:-10px; top:20px; width:0; height:0;
           border-top:10px solid transparent;
           border-bottom:10px solid transparent;
           border-right:10px solid #333;
@@ -198,7 +161,6 @@
     window.location.href = "study.html";
   }
 
-  // ✅ シャッフル
   function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -207,7 +169,6 @@
     return array;
   }
 
-  // ✅ quizzes.json 読み込み
   fetch("quizzes.json")
     .then(res => res.json())
     .then(data => {
@@ -217,14 +178,25 @@
         q.subject === subject && q.chapter === chapter
       );
 
-      filteredQuestions = shuffle(filteredQuestions);
-
       if (filteredQuestions.length === 0) {
         alert("この項目の問題がありません。");
         window.location.href = "study.html";
       }
 
-      // ✅ 前回の続きがあれば復元
+      // ✅ 問題順の復元 or 保存
+      let savedOrder = localStorage.getItem("questionOrder");
+
+      if (savedOrder) {
+        const order = JSON.parse(savedOrder);
+        filteredQuestions = order.map(i => filteredQuestions[i]);
+      } else {
+        const order = filteredQuestions.map((_, i) => i);
+        shuffle(order);
+        filteredQuestions = order.map(i => filteredQuestions[i]);
+        localStorage.setItem("questionOrder", JSON.stringify(order));
+      }
+
+      // ✅ 途中再開の復元
       const savedIndex = localStorage.getItem("lastIndex");
       const savedCorrect = localStorage.getItem("lastCorrectCount");
 
@@ -234,11 +206,9 @@
       showQuestion();
     });
 
-  // ✅ 問題表示
   function showQuestion() {
     const q = filteredQuestions[currentIndex];
 
-    // ✅ 進捗表示
     document.getElementById("progressText").textContent =
       `第${currentIndex + 1}問 / 全${filteredQuestions.length}問中`;
 
@@ -246,7 +216,7 @@
       `【${currentIndex + 1}問目】 ${q.question}`;
 
     const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";  // ✅ ここを修正
+    optionsDiv.innerHTML = "";  // ✅ 修正済み
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement("button");
@@ -260,14 +230,12 @@
     document.getElementById("explanation").style.display = "none";
     document.getElementById("nextBtn").style.display = "none";
 
-    // ✅ 進捗保存
     localStorage.setItem("lastSubject", subject);
     localStorage.setItem("lastChapter", chapter);
     localStorage.setItem("lastIndex", currentIndex);
     localStorage.setItem("lastCorrectCount", correctCount);
   }
 
-  // ✅ 正誤判定
   function checkAnswer(selectedIndex) {
     const q = filteredQuestions[currentIndex];
     const optionButtons = document.querySelectorAll(".option");
@@ -296,17 +264,14 @@
     exp.classList.add("fade-in");
     exp.style.display = "block";
 
-    // ✅ 正解数を保存
     localStorage.setItem("lastCorrectCount", correctCount);
 
     document.getElementById("nextBtn").style.display = "block";
   }
 
-  // ✅ 次の問題へ
   function nextQuestion() {
     currentIndex++;
 
-    // ✅ 保存
     localStorage.setItem("lastIndex", currentIndex);
     localStorage.setItem("lastCorrectCount", correctCount);
 
@@ -318,7 +283,6 @@
     showQuestion();
   }
 
-  // ✅ 結果表示
   function showResult() {
     document.getElementById("quizScreen").style.display = "none";
     document.getElementById("resultScreen").style.display = "block";
@@ -329,7 +293,6 @@
     document.getElementById("scoreText").textContent =
       `正解数：${correctCount} / ${total}（正答率：${rate}%）`;
 
-    // ✅ 正答率100%ならキャラをランダム表示
     if (rate === 100) {
       const characters = [
         "ekiden.jpg",
@@ -341,16 +304,19 @@
       ];
 
       const randomChar = characters[Math.floor(Math.random() * characters.length)];
-      document.getElementById("perfectChar").src = randomChar;
+      const img = document.getElementById("perfectChar");
+      img.src = randomChar;
+      img.style.display = "block";
 
       document.getElementById("perfectMessage").style.display = "block";
     }
 
-    // ✅ 終了したら途中再開データ削除
+    // ✅ 途中再開データ削除
     localStorage.removeItem("lastSubject");
     localStorage.removeItem("lastChapter");
     localStorage.removeItem("lastIndex");
     localStorage.removeItem("lastCorrectCount");
+    localStorage.removeItem("questionOrder");
 
     // ✅ 履歴保存
     const keyBase = `${subject}_${chapter}`;
