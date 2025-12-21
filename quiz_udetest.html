@@ -72,6 +72,21 @@
       border-radius:6px;
       margin-top:0.5rem;
     }
+
+    /* ✅ 自然な薄いグレーボタン */
+    .lightgray-btn {
+      background:#dcdcdc;
+      color:#333;
+      border:none;
+      border-radius:6px;
+      padding:1rem;
+      width:100%;
+      margin-top:1rem;
+      cursor:pointer;
+    }
+    .lightgray-btn:hover {
+      background:#cfcfcf;
+    }
   </style>
 </head>
 
@@ -84,10 +99,10 @@
   <!-- ✅ 選択肢 -->
   <div id="options"></div>
 
-  <!-- ✅ 正解／不正解（選択肢の下に移動） -->
+  <!-- ✅ 正解／不正解（選択肢の下） -->
   <div id="judgeText" style="display:none;"></div>
 
-  <!-- ✅ 解説（judgeText の下） -->
+  <!-- ✅ 解説 -->
   <div id="explanation"></div>
 
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
@@ -97,16 +112,14 @@
   <h2>結果</h2>
   <p id="scoreText"></p>
 
-  <button onclick="location.href='udetest.html'">
+  <button class="lightgray-btn" onclick="location.href='udetest.html'">
     ウデ試しに戻る
   </button>
 
-  <!-- ✅ グレーに変更 -->
-  <button onclick="location.href='mode.html'" style="background:#6c757d; margin-top:1rem;">
+  <button class="lightgray-btn" onclick="location.href='mode.html'">
     トップに戻る
   </button>
 </div>
-
 
 <script>
   let quizData = [];
@@ -176,7 +189,7 @@
     btns.forEach((btn,idx)=>{
       btn.disabled = true;
       if(idx === q.correctIndex) btn.classList.add("correct");
-      if(idx === i && idx !== q.correctIndex) btn.classList.add("wrong");
+      if(idx === i && idx !== q.correctIndex) btn.classclassList.add("wrong");
     });
 
     // ✅ 正解・不正解の表示
