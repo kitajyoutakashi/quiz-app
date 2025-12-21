@@ -127,6 +127,21 @@
   const subject = localStorage.getItem("udetest_subject");
   const chapters = JSON.parse(localStorage.getItem("udetest_chapters"));
 
+  /* ✅ キャラ画像プリロード */
+  const perfectImages = [
+    "ushiro_harimijikai_gray_ikume_.png",
+    "01harimijikai_grau_ikume.png",
+    "陸上イクメちゃん.png",
+    "帽子なし野球ユニフォーム.png"
+  ];
+
+  const preloadedImages = [];
+  perfectImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+    preloadedImages.push(img);
+  });
+
   function shuffle(arr){
     for(let i=arr.length-1;i>0;i--){
       const j=Math.floor(Math.random()*(i+1));
@@ -235,12 +250,6 @@
 
       resultScreen.style.background = "#fff8d6";
 
-      const perfectImages = [
-        "ushiro_harimijikai_gray_ikume_.png",
-        "01harimijikai_grau_ikume.png",
-        "陸上イクメちゃん.png",
-        "帽子なし野球ユニフォーム.png"
-      ];
       const randomImg = perfectImages[Math.floor(Math.random() * perfectImages.length)];
 
       const img = document.createElement("img");
