@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>モード選択</title>
 
-  <!-- ✅ ログインチェック（style の外に置く） -->
+  <!-- ✅ ログインチェック -->
   <script>
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
@@ -22,7 +22,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow-x: hidden; /* ✅ 横ズレ防止 */
+      overflow-x: hidden;
     }
 
     .container {
@@ -33,7 +33,7 @@
       width: 90%;
       max-width: 360px;
       text-align: center;
-      margin: 0 auto; /* ✅ 中央寄せ */
+      margin: 0 auto;
       box-sizing: border-box;
     }
 
@@ -57,6 +57,14 @@
     button:hover {
       background-color: #0056b3;
     }
+
+    .logout-btn {
+      background-color: #6c757d;
+    }
+
+    .logout-btn:hover {
+      background-color: #545b62;
+    }
   </style>
 </head>
 
@@ -64,12 +72,19 @@
   <div class="container">
     <h2>モードを選択</h2>
 
+    <!-- ✅ 項目別学習モード -->
     <button onclick="location.href='study.html'">
       項目別学習モード
     </button>
 
-    <button onclick="location.href='challenge.html'">
+    <!-- ✅ ウデ試しモード（リンク修正済み） -->
+    <button onclick="location.href='udetest.html'">
       ウデ試しモード
+    </button>
+
+    <!-- ✅ ログアウト -->
+    <button class="logout-btn" onclick="location.href='login.html'">
+      ログアウト
     </button>
   </div>
 </body>
