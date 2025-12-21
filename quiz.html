@@ -190,12 +190,10 @@
 
       // ✅ 前回の続きがあれば復元
       const savedIndex = localStorage.getItem("lastIndex");
-      const savedSubject = localStorage.getItem("lastSubject");
-      const savedChapter = localStorage.getItem("lastChapter");
+      const savedCorrect = localStorage.getItem("lastCorrectCount");
 
-      if (savedSubject === subject && savedChapter === chapter && savedIndex !== null) {
-        currentIndex = Number(savedIndex);
-      }
+      if (savedIndex !== null) currentIndex = Number(savedIndex);
+      if (savedCorrect !== null) correctCount = Number(savedCorrect);
 
       showQuestion();
     });
@@ -230,6 +228,7 @@
     localStorage.setItem("lastSubject", subject);
     localStorage.setItem("lastChapter", chapter);
     localStorage.setItem("lastIndex", currentIndex);
+    localStorage.setItem("lastCorrectCount", correctCount);
   }
 
   // ✅ 正誤判定
@@ -246,9 +245,9 @@
     const judge = document.getElementById("judgeText");
 
     if (selectedIndex === q.correctIndex) {
+      correctCount++;
       judge.textContent = "正解！";
       judge.className = "correctText fade-in";
-      correctCount++;
     } else {
       judge.textContent = "不正解…";
       judge.className = "wrongText fade-in";
@@ -261,6 +260,9 @@
     exp.classList.add("fade-in");
     exp.style.display = "block";
 
+    // ✅ 正解数を保存
+    localStorage.setItem("lastCorrectCount", correctCount);
+
     document.getElementById("nextBtn").style.display = "block";
   }
 
@@ -270,6 +272,7 @@
 
     // ✅ 保存
     localStorage.setItem("lastIndex", currentIndex);
+    localStorage.setItem("lastCorrectCount", correctCount);
 
     if (currentIndex >= filteredQuestions.length) {
       showResult();
@@ -290,27 +293,26 @@
     document.getElementById("scoreText").textContent =
       `正解数：${correctCount} / ${total}（正答率：${rate}%）`;
 
-    // ✅ 終了したら保存データ削除
+    // ✅ 終了したら途中再開データ削除
     localStorage.removeItem("lastSubject");
     localStorage.removeItem("lastChapter");
     localStorage.removeItem("lastIndex");
+    localStorage.removeItem("lastCorrectCount");
 
     // ✅ 履歴保存
     const keyBase = `${subject}_${chapter}`;
-    
+
     const today = new Date();
     const y = today.getFullYear();
     const m = String(today.getMonth() + 1).padStart(2, "0");
     const d = String(today.getDate()).padStart(2, "0");
     const yyyymmdd = `${y}${m}${d}`;
-    
+
     localStorage.setItem(`lastDate_${keyBase}`, yyyymmdd);
     localStorage.setItem(`lastRate_${keyBase}`, rate);
-    
-    // ✅ 回数カウント
+
     const prevCount = Number(localStorage.getItem(`lastCount_${keyBase}`) || 0);
     localStorage.setItem(`lastCount_${keyBase}`, prevCount + 1);
-
   }
 </script>
 
