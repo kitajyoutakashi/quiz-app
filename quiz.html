@@ -47,11 +47,11 @@
       background-color: #1e7e34;
     }
 
-    /* ✅ 正解（青） */
-    .correct { background-color: #0275d8 !important; }
+    /* ✅ 正解（赤） */
+    .correct { background-color: #dc3545 !important; }
 
-    /* ✅ 不正解（正解を赤で表示） */
-    .wrong { background-color: #dc3545 !important; }
+    /* ✅ 不正解（正解を青で表示） */
+    .wrong { background-color: #0275d8 !important; }
 
     .fade-in {
       animation: fadeIn 0.5s ease-in-out;
@@ -69,8 +69,8 @@
       display: none;
     }
 
-    .correctText { color: #0275d8; }
-    .wrongText { color: #dc3545; }
+    .correctText { color: #dc3545; } /* 正解 → 赤 */
+    .wrongText { color: #0275d8; }   /* 不正解 → 青 */
 
     #explanation {
       margin-top: 1rem;
@@ -248,11 +248,11 @@
 
     if (selectedIndex === q.correctIndex) {
       correctCount++;
-      optionButtons[q.correctIndex].classList.add("correct"); // ✅ 青
+      optionButtons[q.correctIndex].classList.add("correct"); // ✅ 正解 → 赤
       judge.textContent = "正解！";
       judge.className = "correctText fade-in";
     } else {
-      optionButtons[q.correctIndex].classList.add("wrong"); // ✅ 赤
+      optionButtons[q.correctIndex].classList.add("wrong"); // ✅ 不正解 → 正解を青
       judge.textContent = "不正解…";
       judge.className = "wrongText fade-in";
     }
