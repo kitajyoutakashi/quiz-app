@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ウデ試しモード</title>
+
   <style>
     body {
-      font-family:sans-serif;
+      font-family: sans-serif;
       background:#f5f5f5;
       display:flex;
       justify-content:center;
@@ -14,6 +15,7 @@
       min-height:100vh;
       margin:0;
     }
+
     .container {
       background:white;
       padding:2rem;
@@ -22,6 +24,7 @@
       max-width:420px;
       box-shadow:0 0 10px rgba(0,0,0,0.1);
     }
+
     .option {
       width:100%;
       padding:1rem;
@@ -33,8 +36,10 @@
       cursor:pointer;
       text-align:left;
     }
+
     .correct { background:#28a745 !important; }
     .wrong { background:#dc3545 !important; }
+
     #nextBtn {
       width:100%;
       padding:1rem;
@@ -45,15 +50,42 @@
       display:none;
       cursor:pointer;
     }
+
+    /* ✅ 正解・不正解の表示 */
+    .correctText {
+      color:#d9534f;
+      font-weight:bold;
+      margin-bottom:0.5rem;
+    }
+
+    .wrongText {
+      color:#0275d8;
+      font-weight:bold;
+      margin-bottom:0.5rem;
+    }
+
+    #explanation {
+      display:none;
+      background:#eee;
+      padding:1rem;
+      border-radius:6px;
+      margin-top:0.5rem;
+    }
   </style>
 </head>
+
 <body>
 
 <div class="container" id="quizScreen">
   <p id="progress"></p>
   <h2 id="questionText"></h2>
+
+  <div id="judgeText" style="display:none;"></div>
+
   <div id="options"></div>
-  <div id="explanation" style="display:none; background:#eee; padding:1rem; border-radius:6px;"></div>
+
+  <div id="explanation"></div>
+
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
 </div>
 
@@ -105,6 +137,9 @@
 
     document.getElementById("questionText").textContent = q.question;
 
+    const judge = document.getElementById("judgeText");
+    judge.style.display = "none";
+
     const optDiv = document.getElementById("options");
     optDiv.innerHTML = "";
 
@@ -124,14 +159,28 @@
     const q = questions[index];
     const btns = document.querySelectorAll(".option");
 
+    // ✅ ボタン色付け
     btns.forEach((btn,idx)=>{
-      btn.disabled=true;
-      if(idx===q.correctIndex) btn.classList.add("correct");
-      if(idx===i && idx!==q.correctIndex) btn.classList.add("wrong");
+      btn.disabled = true;
+      if(idx === q.correctIndex) btn.classList.add("correct");
+      if(idx === i && idx !== q.correctIndex) btn.classList.add("wrong");
     });
 
-    if(i===q.correctIndex) correct++;
+    // ✅ 正解・不正解の表示
+    const judge = document.getElementById("judgeText");
 
+    if(i === q.correctIndex){
+      correct++;
+      judge.textContent = "正解！";
+      judge.className = "correctText";
+    } else {
+      judge.textContent = "不正解…";
+      judge.className = "wrongText";
+    }
+
+    judge.style.display = "block";
+
+    // ✅ 解説表示
     const exp=document.getElementById("explanation");
     exp.innerHTML=q.explanation;
     exp.style.display="block";
