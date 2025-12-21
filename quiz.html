@@ -47,7 +47,10 @@
       background-color: #1e7e34;
     }
 
-    .correct { background-color: #28a745 !important; }
+    /* ✅ 正解（青） */
+    .correct { background-color: #0275d8 !important; }
+
+    /* ✅ 不正解（正解を赤で表示） */
     .wrong { background-color: #dc3545 !important; }
 
     .fade-in {
@@ -66,8 +69,8 @@
       display: none;
     }
 
-    .correctText { color: #d9534f; }
-    .wrongText { color: #0275d8; }
+    .correctText { color: #0275d8; }
+    .wrongText { color: #dc3545; }
 
     #explanation {
       margin-top: 1rem;
@@ -183,7 +186,6 @@
         window.location.href = "study.html";
       }
 
-      // ✅ 問題順の復元 or 保存
       let savedOrder = localStorage.getItem("questionOrder");
 
       if (savedOrder) {
@@ -196,7 +198,6 @@
         localStorage.setItem("questionOrder", JSON.stringify(order));
       }
 
-      // ✅ 途中再開の復元
       const savedIndex = localStorage.getItem("lastIndex");
       const savedCorrect = localStorage.getItem("lastCorrectCount");
 
@@ -216,7 +217,7 @@
       `【${currentIndex + 1}問目】 ${q.question}`;
 
     const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";  // ✅ 修正済み
+    optionsDiv.innerHTML = "";
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement("button");
@@ -236,23 +237,22 @@
     localStorage.setItem("lastCorrectCount", correctCount);
   }
 
+  /* ✅ 正しい色仕様を反映した checkAnswer() */
   function checkAnswer(selectedIndex) {
     const q = filteredQuestions[currentIndex];
     const optionButtons = document.querySelectorAll(".option");
 
-    optionButtons.forEach((btn, i) => {
-      btn.disabled = true;
-      if (i === q.correctIndex) btn.classList.add("correct");
-      if (i === selectedIndex && i !== q.correctIndex) btn.classList.add("wrong");
-    });
+    optionButtons.forEach(btn => btn.disabled = true);
 
     const judge = document.getElementById("judgeText");
 
     if (selectedIndex === q.correctIndex) {
       correctCount++;
+      optionButtons[q.correctIndex].classList.add("correct"); // ✅ 青
       judge.textContent = "正解！";
       judge.className = "correctText fade-in";
     } else {
+      optionButtons[q.correctIndex].classList.add("wrong"); // ✅ 赤
       judge.textContent = "不正解…";
       judge.className = "wrongText fade-in";
     }
@@ -311,14 +311,12 @@
       document.getElementById("perfectMessage").style.display = "block";
     }
 
-    // ✅ 途中再開データ削除
     localStorage.removeItem("lastSubject");
     localStorage.removeItem("lastChapter");
     localStorage.removeItem("lastIndex");
     localStorage.removeItem("lastCorrectCount");
     localStorage.removeItem("questionOrder");
 
-    // ✅ 履歴保存
     const keyBase = `${subject}_${chapter}`;
 
     const today = new Date();
