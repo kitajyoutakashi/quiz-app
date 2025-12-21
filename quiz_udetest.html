@@ -38,8 +38,11 @@
       text-align:left;
     }
 
-    .correct { background:#28a745 !important; }
-    .wrong { background:#dc3545 !important; }
+    /* ✅ 正解（赤） */
+    .correct { background:#dc3545 !important; }
+
+    /* ✅ 不正解（正解を青で表示） */
+    .wrong { background:#0275d8 !important; }
 
     #nextBtn {
       width:100%;
@@ -54,7 +57,7 @@
     }
 
     .correctText {
-      color:#d9534f;
+      color:#dc3545;
       font-weight:bold;
       margin-bottom:0.5rem;
     }
@@ -73,7 +76,6 @@
       margin-top:0.5rem;
     }
 
-    /* ✅ 自然な薄いグレーボタン */
     .lightgray-btn {
       background:#dcdcdc;
       color:#333;
@@ -190,23 +192,22 @@
     document.getElementById("nextBtn").style.display="none";
   }
 
+  /* ✅ 正解＝赤、不正解＝青（正解だけ青）に統合 */
   function checkAnswer(i){
     const q = questions[index];
     const btns = document.querySelectorAll(".option");
 
-    btns.forEach((btn,idx)=>{
-      btn.disabled = true;
-      if(idx === q.correctIndex) btn.classList.add("correct");
-      if(idx === i && idx !== q.correctIndex) btn.classList.add("wrong");
-    });
+    btns.forEach(btn => btn.disabled = true);
 
     const judge = document.getElementById("judgeText");
 
     if(i === q.correctIndex){
       correct++;
+      btns[q.correctIndex].classList.add("correct"); // ✅ 正解 → 赤
       judge.textContent = "正解！";
       judge.className = "correctText";
     } else {
+      btns[q.correctIndex].classList.add("wrong"); // ✅ 不正解 → 正解を青
       judge.textContent = "不正解…";
       judge.className = "wrongText";
     }
