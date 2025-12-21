@@ -246,7 +246,7 @@
       `【${currentIndex + 1}問目】 ${q.question}`;
 
     const optionsDiv = document.getElementById("options");
-    optionsDiv.innerinnerHTML = "";
+    optionsDiv.innerHTML = "";  // ✅ ここを修正
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement("button");
