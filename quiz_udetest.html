@@ -23,6 +23,7 @@
       width:90%;
       max-width:420px;
       box-shadow:0 0 10px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
     }
 
     .option {
@@ -52,7 +53,6 @@
       margin-top:1rem;
     }
 
-    /* ✅ 正解・不正解の表示 */
     .correctText {
       color:#d9534f;
       font-weight:bold;
@@ -96,13 +96,10 @@
   <p id="progress"></p>
   <h2 id="questionText"></h2>
 
-  <!-- ✅ 選択肢 -->
   <div id="options"></div>
 
-  <!-- ✅ 正解／不正解（選択肢の下） -->
   <div id="judgeText" style="display:none;"></div>
 
-  <!-- ✅ 解説 -->
   <div id="explanation"></div>
 
   <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
@@ -143,12 +140,10 @@
     .then(data=>{
       quizData = data;
 
-      // ✅ 選択した項目の問題を全部集める
       let pool = quizData.filter(q =>
         q.subject === subject && chapters.includes(q.chapter)
       );
 
-      // ✅ ランダムに15問（未満なら全問）
       shuffle(pool);
       questions = pool.slice(0, 15);
 
@@ -163,8 +158,7 @@
 
     document.getElementById("questionText").textContent = q.question;
 
-    const judge = document.getElementById("judgeText");
-    judge.style.display = "none";
+    document.getElementById("judgeText").style.display = "none";
 
     const optDiv = document.getElementById("options");
     optDiv.innerHTML = "";
@@ -185,14 +179,12 @@
     const q = questions[index];
     const btns = document.querySelectorAll(".option");
 
-    // ✅ ボタン色付け
     btns.forEach((btn,idx)=>{
       btn.disabled = true;
       if(idx === q.correctIndex) btn.classList.add("correct");
-      if(idx === i && idx !== q.correctIndex) btn.classclassList.add("wrong");
+      if(idx === i && idx !== q.correctIndex) btn.classList.add("wrong");
     });
 
-    // ✅ 正解・不正解の表示
     const judge = document.getElementById("judgeText");
 
     if(i === q.correctIndex){
@@ -206,7 +198,6 @@
 
     judge.style.display = "block";
 
-    // ✅ 解説表示
     const exp=document.getElementById("explanation");
     exp.innerHTML=q.explanation;
     exp.style.display="block";
@@ -225,11 +216,52 @@
 
   function showResult(){
     document.getElementById("quizScreen").style.display="none";
-    document.getElementById("resultScreen").style.display="block";
+    const resultScreen = document.getElementById("resultScreen");
+    resultScreen.style.display="block";
 
     const rate = Math.round((correct/questions.length)*100);
     document.getElementById("scoreText").textContent =
       `正解数：${correct} / ${questions.length}（正答率：${rate}%）`;
+
+    const oldImg = document.getElementById("perfectImg");
+    if (oldImg) oldImg.remove();
+
+    const oldMsg = document.getElementById("perfectMsg");
+    if (oldMsg) oldMsg.remove();
+
+    resultScreen.style.background = "white";
+
+    if(rate === 100){
+
+      resultScreen.style.background = "#fff8d6";
+
+      const perfectImages = [
+        "ushiro_harimijikai_gray_ikume_.png",
+        "01harimijikai_grau_ikume.png",
+        "陸上イクメちゃん.png",
+        "帽子なし野球ユニフォーム.png"
+      ];
+      const randomImg = perfectImages[Math.floor(Math.random() * perfectImages.length)];
+
+      const img = document.createElement("img");
+      img.id = "perfectImg";
+      img.src = randomImg;
+      img.style.width = "100%";
+      img.style.maxWidth = "260px";
+      img.style.display = "block";
+      img.style.margin = "0 auto 1rem auto";
+      resultScreen.insertBefore(img, resultScreen.firstChild);
+
+      const msg = document.createElement("div");
+      msg.id = "perfectMsg";
+      msg.textContent = "Very Good!";
+      msg.style.textAlign = "center";
+      msg.style.fontSize = "1.4rem";
+      msg.style.fontWeight = "bold";
+      msg.style.color = "#d9534f";
+      msg.style.marginBottom = "1rem";
+      resultScreen.insertBefore(msg, document.getElementById("scoreText"));
+    }
   }
 </script>
 
