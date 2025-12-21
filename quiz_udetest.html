@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ウデ試しモード</title>
+  <style>
+    body {
+      font-family:sans-serif;
+      background:#f5f5f5;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+    }
+    .container {
+      background:white;
+      padding:2rem;
+      border-radius:12px;
+      width:90%;
+      max-width:420px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+    .option {
+      width:100%;
+      padding:1rem;
+      margin-bottom:1rem;
+      background:#28a745;
+      color:white;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      text-align:left;
+    }
+    .correct { background:#28a745 !important; }
+    .wrong { background:#dc3545 !important; }
+    #nextBtn {
+      width:100%;
+      padding:1rem;
+      background:#6c757d;
+      color:white;
+      border:none;
+      border-radius:6px;
+      display:none;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="quizScreen">
+  <p id="progress"></p>
+  <h2 id="questionText"></h2>
+  <div id="options"></div>
+  <div id="explanation" style="display:none; background:#eee; padding:1rem; border-radius:6px;"></div>
+  <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
+</div>
+
+<div class="container" id="resultScreen" style="display:none;">
+  <h2>結果</h2>
+  <p id="scoreText"></p>
+  <button onclick="location.href='udetest.html'">ウデ試しに戻る</button>
+</div>
+
+<script>
+  let quizData = [];
+  let questions = [];
+  let index = 0;
+  let correct = 0;
+
+  const subject = localStorage.getItem("udetest_subject");
+  const chapters = JSON.parse(localStorage.getItem("udetest_chapters"));
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  fetch("quizzes.json")
+    .then(res=>res.json())
+    .then(data=>{
+      quizData = data;
+
+      // ✅ 選択した項目の問題を全部集める
+      let pool = quizData.filter(q =>
+        q.subject === subject && chapters.includes(q.chapter)
+      );
+
+      // ✅ ランダムに15問（未満なら全問）
+      shuffle(pool);
+      questions = pool.slice(0, 15);
+
+      showQuestion();
+    });
+
+  function showQuestion() {
+    const q = questions[index];
+
+    document.getElementById("progress").textContent =
+      `第${index+1}問 / 全${questions.length}問`;
+
+    document.getElementById("questionText").textContent = q.question;
+
+    const optDiv = document.getElementById("options");
+    optDiv.innerHTML = "";
+
+    q.options.forEach((opt,i)=>{
+      const btn=document.createElement("button");
+      btn.className="option";
+      btn.textContent=opt;
+      btn.onclick=()=>checkAnswer(i);
+      optDiv.appendChild(btn);
+    });
+
+    document.getElementById("explanation").style.display="none";
+    document.getElementById("nextBtn").style.display="none";
+  }
+
+  function checkAnswer(i){
+    const q = questions[index];
+    const btns = document.querySelectorAll(".option");
+
+    btns.forEach((btn,idx)=>{
+      btn.disabled=true;
+      if(idx===q.correctIndex) btn.classList.add("correct");
+      if(idx===i && idx!==q.correctIndex) btn.classList.add("wrong");
+    });
+
+    if(i===q.correctIndex) correct++;
+
+    const exp=document.getElementById("explanation");
+    exp.innerHTML=q.explanation;
+    exp.style.display="block";
+
+    document.getElementById("nextBtn").style.display="block";
+  }
+
+  function nextQuestion(){
+    index++;
+    if(index>=questions.length){
+      showResult();
+      return;
+    }
+    showQuestion();
+  }
+
+  function showResult(){
+    document.getElementById("quizScreen").style.display="none";
+    document.getElementById("resultScreen").style.display="block";
+
+    const rate = Math.round((correct/questions.length)*100);
+    document.getElementById("scoreText").textContent =
+      `正解数：${correct} / ${questions.length}（正答率：${rate}%）`;
+  }
+</script>
+
+</body>
+</html>
