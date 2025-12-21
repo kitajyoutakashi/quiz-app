@@ -60,7 +60,6 @@
       background-color: #545b62;
     }
 
-    /* ✅ 履歴表示 */
     #history {
       font-size: 0.9rem;
       color: #555;
@@ -82,7 +81,6 @@
     <option value="">項目を選択</option>
   </select>
 
-  <!-- ✅ 履歴表示エリア -->
   <p id="history"></p>
 
   <button onclick="startQuiz()">学習を開始</button>
@@ -92,28 +90,26 @@
 <script>
   let quizData = [];
 
-  // ✅ 国家試験の科目順
   const subjectOrder = [
     "医療概論","公衆衛生学","関係法規","解剖学","生理学","病理学",
     "臨床医学総論","臨床医学各論","リハビリテーション医学",
     "東洋医学概論","経絡経穴概論","東洋医学臨床論","はり理論","きゅう理論"
   ];
 
-  // ✅ ページ読み込み時にすべて実行
   window.addEventListener("load", () => {
 
-    // ✅ 1. ログインチェック
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
       return;
     }
 
-    // ✅ 2. 前回の続きがあるか確認
+    // ✅ 前回の続き確認
     const lastSubject = localStorage.getItem("lastSubject");
     const lastChapter = localStorage.getItem("lastChapter");
     const lastIndex = localStorage.getItem("lastIndex");
 
     if (lastSubject && lastChapter && lastIndex !== null) {
+
       const resume = confirm(
         `前回の続きがあります。\n\n科目：${lastSubject}\n項目：${lastChapter}\n第${Number(lastIndex) + 1}問目から再開しますか？`
       );
@@ -123,10 +119,17 @@
         localStorage.setItem("chapter", lastChapter);
         window.location.href = "quiz.html";
         return;
+      } else {
+        // ✅ キャンセル時：途中データを完全削除
+        localStorage.removeItem("lastSubject");
+        localStorage.removeItem("lastChapter");
+        localStorage.removeItem("lastIndex");
+        localStorage.removeItem("lastCorrectCount");
+        localStorage.removeItem("questionOrder");
       }
     }
 
-    // ✅ 3. quizzes.json を読み込み
+    // ✅ quizzes.json 読み込み
     fetch("quizzes.json")
       .then(res => res.json())
       .then(data => {
@@ -135,7 +138,6 @@
       });
   });
 
-  // ✅ 科目一覧を生成
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
 
@@ -153,14 +155,13 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
-  // ✅ 項目一覧を生成
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterSelect = document.getElementById("chapter");
     const history = document.getElementById("history");
 
     chapterSelect.innerHTML = "<option value=''>項目を選択</option>";
-    history.textContent = ""; // ✅ 科目変更時は履歴を消す
+    history.textContent = "";
 
     let chapters = [
       ...new Set(
@@ -186,7 +187,6 @@
     chapterSelect.addEventListener("change", showHistory);
   }
 
-  // ✅ 履歴表示
   function showHistory() {
     const subject = document.getElementById("subject").value;
     const chapter = document.getElementById("chapter").value;
@@ -211,7 +211,6 @@
     }
   }
 
-  // ✅ 学習開始
   function startQuiz() {
     const subject = document.getElementById("subject").value;
     const chapter = document.getElementById("chapter").value;
