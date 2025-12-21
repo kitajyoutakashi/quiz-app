@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ウデ試しモード</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background:#f5f5f5;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+    }
+    .container {
+      background:white;
+      padding:2rem;
+      border-radius:12px;
+      width:90%;
+      max-width:420px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+    select, button {
+      width:100%;
+      padding:1rem;
+      margin-bottom:1rem;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:1rem;
+    }
+    button {
+      background:#007bff;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+    button:hover {
+      background:#0056b3;
+    }
+    .checkbox-item {
+      margin-bottom:0.5rem;
+      text-align:left;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>ウデ試しモード</h2>
+
+  <select id="subject">
+    <option value="">科目を選択</option>
+  </select>
+
+  <div id="chapterList"></div>
+
+  <button onclick="startTest()">開始</button>
+  <button onclick="location.href='mode.html'" style="background:#6c757d;">戻る</button>
+</div>
+
+<script>
+  let quizData = [];
+
+  const subjectOrder = [
+    "医療概論","公衆衛生学","関係法規","解剖学","生理学","病理学",
+    "臨床医学総論","臨床医学各論","リハビリテーション医学",
+    "東洋医学概論","経絡経穴概論","東洋医学臨床論","はり理論","きゅう理論"
+  ];
+
+  window.onload = () => {
+    fetch("quizzes.json")
+      .then(res => res.json())
+      .then(data => {
+        quizData = data;
+        populateSubjects();
+      });
+  };
+
+  function populateSubjects() {
+    const subjectSelect = document.getElementById("subject");
+    let subjects = [...new Set(quizData.map(q => q.subject))];
+
+    subjects.sort((a,b)=>subjectOrder.indexOf(a)-subjectOrder.indexOf(b));
+
+    subjects.forEach(sub=>{
+      const op=document.createElement("option");
+      op.value=sub;
+      op.textContent=sub;
+      subjectSelect.appendChild(op);
+    });
+
+    subjectSelect.addEventListener("change", populateChapters);
+  }
+
+  function populateChapters() {
+    const subject = document.getElementById("subject").value;
+    const chapterList = document.getElementById("chapterList");
+    chapterList.innerHTML = "";
+
+    if (!subject) return;
+
+    let chapters = [
+      ...new Set(
+        quizData.filter(q=>q.subject===subject).map(q=>q.chapter)
+      )
+    ];
+
+    chapters.sort();
+
+    chapters.forEach(ch=>{
+      const div=document.createElement("div");
+      div.className="checkbox-item";
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${ch}"> ${ch}
+        </label>
+      `;
+      chapterList.appendChild(div);
+    });
+  }
+
+  function startTest() {
+    const subject = document.getElementById("subject").value;
+    const checks = [...document.querySelectorAll("#chapterList input:checked")];
+
+    if (!subject || checks.length===0) {
+      alert("科目と項目を選択してください。");
+      return;
+    }
+
+    const selectedChapters = checks.map(c=>c.value);
+
+    localStorage.setItem("udetest_subject", subject);
+    localStorage.setItem("udetest_chapters", JSON.stringify(selectedChapters));
+
+    location.href = "quiz_udetest.html";
+  }
+</script>
+
+</body>
+</html>
