@@ -63,33 +63,6 @@
 </head>
 <body>
 
-<script>
-  // ✅ 未ログインならログイン画面へ戻す
-  if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
-
-  // ✅ ✅ 前回の続きがあるか確認（ここが重要）
-  window.addEventListener("load", () => {
-    const lastSubject = localStorage.getItem("lastSubject");
-    const lastChapter = localStorage.getItem("lastChapter");
-    const lastIndex = localStorage.getItem("lastIndex");
-
-    if (lastSubject && lastChapter && lastIndex !== null) {
-      const resume = confirm(
-        `前回の続きがあります。\n\n科目：${lastSubject}\n項目：${lastChapter}\n第${Number(lastIndex) + 1}問目から再開しますか？`
-      );
-
-      if (resume) {
-        // ✅ 再開するための情報をセット
-        localStorage.setItem("subject", lastSubject);
-        localStorage.setItem("chapter", lastChapter);
-        window.location.href = "quiz.html";
-      }
-    }
-  });
-</script>
-
 <div class="container">
   <h2>項目別学習モード</h2>
 
@@ -108,38 +81,56 @@
 <script>
   let quizData = [];
 
+  // ✅ 国家試験の科目順
   const subjectOrder = [
-    "医療概論",
-    "公衆衛生学",
-    "関係法規",
-    "解剖学",
-    "生理学",
-    "病理学",
-    "臨床医学総論",
-    "臨床医学各論",
-    "リハビリテーション医学",
-    "東洋医学概論",
-    "経絡経穴概論",
-    "東洋医学臨床論",
-    "はり理論",
-    "きゅう理論"
+    "医療概論","公衆衛生学","関係法規","解剖学","生理学","病理学",
+    "臨床医学総論","臨床医学各論","リハビリテーション医学",
+    "東洋医学概論","経絡経穴概論","東洋医学臨床論","はり理論","きゅう理論"
   ];
 
-  fetch("quizzes.json")
-    .then(res => res.json())
-    .then(data => {
-      quizData = data;
-      populateSubjects();
-    });
+  // ✅ ページ読み込み時にすべて実行
+  window.addEventListener("load", () => {
 
+    // ✅ 1. ログインチェック
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+      return;
+    }
+
+    // ✅ 2. 前回の続きがあるか確認
+    const lastSubject = localStorage.getItem("lastSubject");
+    const lastChapter = localStorage.getItem("lastChapter");
+    const lastIndex = localStorage.getItem("lastIndex");
+
+    if (lastSubject && lastChapter && lastIndex !== null) {
+      const resume = confirm(
+        `前回の続きがあります。\n\n科目：${lastSubject}\n項目：${lastChapter}\n第${Number(lastIndex) + 1}問目から再開しますか？`
+      );
+
+      if (resume) {
+        localStorage.setItem("subject", lastSubject);
+        localStorage.setItem("chapter", lastChapter);
+        window.location.href = "quiz.html";
+        return;
+      }
+    }
+
+    // ✅ 3. quizzes.json を読み込み
+    fetch("quizzes.json")
+      .then(res => res.json())
+      .then(data => {
+        quizData = data;
+        populateSubjects();
+      });
+  });
+
+  // ✅ 科目一覧を生成
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
 
     let subjects = [...new Set(quizData.map(q => q.subject))];
 
-    subjects.sort((a, b) => {
-      return subjectOrder.indexOf(a) - subjectOrder.indexOf(b);
-    });
+    subjects.sort((a, b) => subjectOrder.indexOf(a) - subjectOrder.indexOf(b));
 
     subjects.forEach(sub => {
       const option = document.createElement("option");
@@ -151,6 +142,7 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
+  // ✅ 項目一覧を生成
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterSelect = document.getElementById("chapter");
@@ -159,19 +151,15 @@
 
     let chapters = [
       ...new Set(
-        quizData
-          .filter(q => q.subject === subject)
-          .map(q => q.chapter)
+        quizData.filter(q => q.subject === subject).map(q => q.chapter)
       )
     ];
 
     chapters.sort((a, b) => {
       const categoryA = a.split("・")[0];
       const categoryB = b.split("・")[0];
-
       if (categoryA < categoryB) return -1;
       if (categoryA > categoryB) return 1;
-
       return a.localeCompare(b, "ja");
     });
 
@@ -183,6 +171,7 @@
     });
   }
 
+  // ✅ 学習開始
   function startQuiz() {
     const subject = document.getElementById("subject").value;
     const chapter = document.getElementById("chapter").value;
