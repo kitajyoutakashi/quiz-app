@@ -37,8 +37,6 @@
       border-radius: 6px;
       border: 1px solid #ccc;
       box-sizing: border-box;
-    
-      /* ✅ 追加：プルダウンの表示文字を中央揃え */
       text-align: center;
       text-align-last: center;
     }
@@ -70,6 +68,26 @@
   if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
   }
+
+  // ✅ ✅ 前回の続きがあるか確認（ここが重要）
+  window.addEventListener("load", () => {
+    const lastSubject = localStorage.getItem("lastSubject");
+    const lastChapter = localStorage.getItem("lastChapter");
+    const lastIndex = localStorage.getItem("lastIndex");
+
+    if (lastSubject && lastChapter && lastIndex !== null) {
+      const resume = confirm(
+        `前回の続きがあります。\n\n科目：${lastSubject}\n項目：${lastChapter}\n第${Number(lastIndex) + 1}問目から再開しますか？`
+      );
+
+      if (resume) {
+        // ✅ 再開するための情報をセット
+        localStorage.setItem("subject", lastSubject);
+        localStorage.setItem("chapter", lastChapter);
+        window.location.href = "quiz.html";
+      }
+    }
+  });
 </script>
 
 <div class="container">
@@ -90,7 +108,6 @@
 <script>
   let quizData = [];
 
-  // ✅ 国家試験の科目順
   const subjectOrder = [
     "医療概論",
     "公衆衛生学",
@@ -108,7 +125,6 @@
     "きゅう理論"
   ];
 
-  // ✅ quizzes.json を読み込む
   fetch("quizzes.json")
     .then(res => res.json())
     .then(data => {
@@ -116,7 +132,6 @@
       populateSubjects();
     });
 
-  // ✅ 科目一覧を自動生成（国家試験順）
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
 
@@ -136,7 +151,6 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
-  // ✅ 項目一覧をカテゴリ順に並べる
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterSelect = document.getElementById("chapter");
@@ -151,7 +165,6 @@
       )
     ];
 
-    // ✅ カテゴリ（chapter の最初の「〇〇・」部分）でソート
     chapters.sort((a, b) => {
       const categoryA = a.split("・")[0];
       const categoryB = b.split("・")[0];
@@ -170,7 +183,6 @@
     });
   }
 
-  // ✅ 学習開始
   function startQuiz() {
     const subject = document.getElementById("subject").value;
     const chapter = document.getElementById("chapter").value;
