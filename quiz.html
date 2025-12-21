@@ -122,6 +122,12 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+    /* ✅ 100%時のキャラ表示 */
+    #perfectMessage {
+      display: none;
+      margin-top: 1.5rem;
+    }
   </style>
 </head>
 <body>
@@ -145,6 +151,36 @@
 <div class="container" id="resultScreen">
   <h2>結果</h2>
   <p id="scoreText"></p>
+
+  <!-- ✅ 正答率100%のときだけ表示される -->
+  <div id="perfectMessage">
+    <div style="display:flex; align-items:flex-start; gap:10px; justify-content:center;">
+      <img src="images/character.png" alt="キャラ" style="width:80px; height:auto;">
+      <div style="
+        background:#fff;
+        border:2px solid #333;
+        border-radius:10px;
+        padding:10px;
+        position:relative;
+        max-width:200px;
+        font-weight:bold;
+      ">
+        やったね！
+        <div style="
+          content:'';
+          position:absolute;
+          left:-10px;
+          top:20px;
+          width:0;
+          height:0;
+          border-top:10px solid transparent;
+          border-bottom:10px solid transparent;
+          border-right:10px solid #333;
+        "></div>
+      </div>
+    </div>
+  </div>
+
   <button onclick="location.href='study.html'">科目選択に戻る</button>
 </div>
 
@@ -292,6 +328,11 @@
 
     document.getElementById("scoreText").textContent =
       `正解数：${correctCount} / ${total}（正答率：${rate}%）`;
+
+    // ✅ 正答率100%ならキャラ表示
+    if (rate === 100) {
+      document.getElementById("perfectMessage").style.display = "block";
+    }
 
     // ✅ 終了したら途中再開データ削除
     localStorage.removeItem("lastSubject");
