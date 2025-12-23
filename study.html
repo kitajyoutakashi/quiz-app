@@ -103,7 +103,6 @@
       return;
     }
 
-    // ✅ 前回の続き確認
     const lastSubject = localStorage.getItem("lastSubject");
     const lastChapter = localStorage.getItem("lastChapter");
     const lastIndex = localStorage.getItem("lastIndex");
@@ -120,7 +119,6 @@
         window.location.href = "quiz.html";
         return;
       } else {
-        // ✅ キャンセル時：途中データを完全削除
         localStorage.removeItem("lastSubject");
         localStorage.removeItem("lastChapter");
         localStorage.removeItem("lastIndex");
@@ -129,7 +127,6 @@
       }
     }
 
-    // ✅ quizzes.json 読み込み
     fetch("quizzes.json")
       .then(res => res.json())
       .then(data => {
@@ -177,10 +174,22 @@
       return a.localeCompare(b, "ja");
     });
 
+    // 🔥 プルダウンに履歴を表示する部分（完全版）
     chapters.forEach(ch => {
       const option = document.createElement("option");
       option.value = ch;
-      option.textContent = ch;
+
+      const keyBase = `${subject}_${ch}`;
+      const date = localStorage.getItem(`lastDate_${keyBase}`);
+      const rate = localStorage.getItem(`lastRate_${keyBase}`);
+      const count = localStorage.getItem(`lastCount_${keyBase}`);
+
+      if (date && rate && count) {
+        option.textContent = `${ch}: ${date}, 回数${count}, 正答率${rate}%`;
+      } else {
+        option.textContent = `${ch}: 履歴なし`;
+      }
+
       chapterSelect.appendChild(option);
     });
 
