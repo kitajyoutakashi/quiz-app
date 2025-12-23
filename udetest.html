@@ -25,7 +25,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    select, button, input {
+    select, button, input[type="number"] {
       width: 100%;
       padding: 1rem;
       margin-bottom: 1rem;
@@ -50,18 +50,37 @@
       margin-bottom: 0.9rem;
     }
 
-    /* 🔥 テキストと☐を同じインライン要素に入れる */
-    .chapter-inline {
+    /* ラベル全体がクリックターゲット */
+    .chapter-label {
+      display: block;
       font-size: 1rem;
       line-height: 1.6;
+      cursor: pointer;
+    }
+
+    /* 実際のチェックボックスは透明にして隠す（でも機能は生きている） */
+    .chapter-label input.real-checkbox {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* テキスト＋見た目の☐を一体として表示 */
+    .chapter-text {
+      display: inline;
       word-break: break-word;
       white-space: normal;
     }
 
-    .chapter-inline input[type="checkbox"] {
-      margin-left: 0.3rem;
-      vertical-align: middle;
-      transform: translateY(1px);
+    /* 見た目の☐（未チェック） */
+    .chapter-text::after {
+      content: "\00a0☐";  /* 半角分だけ詰めたスペース＋☐ */
+      font-size: 1rem;
+    }
+
+    /* 見た目の☑（チェック時） */
+    .chapter-label input.real-checkbox:checked + .chapter-text::after {
+      content: "\00a0☑";
     }
   </style>
 </head>
@@ -141,9 +160,12 @@
       const div = document.createElement("div");
       div.className = "checkbox-item";
 
-      /* 🔥 テキストと☐を同じ span に入れる（これが唯一の正解） */
+      // input（本物のチェックボックス）＋ span（テキスト＋疑似☐）
       div.innerHTML =
-        `<span class="chapter-inline">${ch}<input type="checkbox" value="${ch}"></span>`;
+        `<label class="chapter-label">
+           <input type="checkbox" class="real-checkbox" value="${ch}">
+           <span class="chapter-text">${ch}</span>
+         </label>`;
 
       chapterList.appendChild(div);
     });
@@ -151,7 +173,7 @@
 
   function startTest() {
     const subject = document.getElementById("subject").value;
-    const checks = [...document.querySelectorAll("#chapterList input:checked")];
+    const checks = [...document.querySelectorAll("#chapterList input.real-checkbox:checked")];
     const count = Number(document.getElementById("questionCount").value);
 
     if (!subject || checks.length === 0) {
