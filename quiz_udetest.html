@@ -38,10 +38,10 @@
       text-align:left;
     }
 
-    /* ✅ 正解（赤） */
+    /* 正解＝赤 */
     .correct { background:#dc3545 !important; }
 
-    /* ✅ 不正解（正解を青で表示） */
+    /* 不正解＝青（正解だけ青） */
     .wrong { background:#0275d8 !important; }
 
     #nextBtn {
@@ -129,7 +129,7 @@
   const subject = localStorage.getItem("udetest_subject");
   const chapters = JSON.parse(localStorage.getItem("udetest_chapters"));
 
-  /* ✅ キャラ画像プリロード */
+  /* キャラ画像プリロード */
   const perfectImages = [
     "ushiro_harimijikai_gray_ikume_.png",
     "01harimijikai_grau_ikume.png",
@@ -162,7 +162,11 @@
       );
 
       shuffle(pool);
-      questions = pool.slice(0, 15);
+
+      /* 🔥 ここが今回の重要ポイント：ユーザー入力の問題数を取得 */
+      const count = Number(localStorage.getItem("udetest_count")) || 15;
+
+      questions = pool.slice(0, count);
 
       showQuestion();
     });
@@ -192,7 +196,7 @@
     document.getElementById("nextBtn").style.display="none";
   }
 
-  /* ✅ 正解＝赤、不正解＝青（正解だけ青）に統合 */
+  /* 正解＝赤、不正解＝青（正解だけ青） */
   function checkAnswer(i){
     const q = questions[index];
     const btns = document.querySelectorAll(".option");
@@ -203,11 +207,11 @@
 
     if(i === q.correctIndex){
       correct++;
-      btns[q.correctIndex].classList.add("correct"); // ✅ 正解 → 赤
+      btns[q.correctIndex].classList.add("correct");
       judge.textContent = "正解！";
       judge.className = "correctText";
     } else {
-      btns[q.correctIndex].classList.add("wrong"); // ✅ 不正解 → 正解を青
+      btns[q.correctIndex].classList.add("wrong");
       judge.textContent = "不正解…";
       judge.className = "wrongText";
     }
