@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ウデ試しモード</title>
-
   <style>
     body {
       font-family: sans-serif;
@@ -15,7 +14,6 @@
       min-height:100vh;
       margin:0;
     }
-
     .container {
       background:white;
       padding:2rem;
@@ -23,259 +21,135 @@
       width:90%;
       max-width:420px;
       box-shadow:0 0 10px rgba(0,0,0,0.1);
-      transition: background 0.3s ease;
     }
-
-    .option {
+    select, button, input {
       width:100%;
       padding:1rem;
       margin-bottom:1rem;
-      background:#28a745;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:1rem;
+      box-sizing:border-box;
+    }
+    button {
+      background:#007bff;
       color:white;
       border:none;
-      border-radius:6px;
       cursor:pointer;
+    }
+    button:hover {
+      background:#0056b3;
+    }
+    .checkbox-item {
+      margin-bottom:0.5rem;
       text-align:left;
-    }
-
-    /* 正解＝赤 */
-    .correct { background:#dc3545 !important; }
-
-    /* 不正解＝青（正解だけ青） */
-    .wrong { background:#0275d8 !important; }
-
-    #nextBtn {
-      width:100%;
-      padding:1rem;
-      background:#6c757d;
-      color:white;
-      border:none;
-      border-radius:6px;
-      display:none;
-      cursor:pointer;
-      margin-top:1rem;
-    }
-
-    .correctText {
-      color:#dc3545;
-      font-weight:bold;
-      margin-bottom:0.5rem;
-    }
-
-    .wrongText {
-      color:#0275d8;
-      font-weight:bold;
-      margin-bottom:0.5rem;
-    }
-
-    #explanation {
-      display:none;
-      background:#eee;
-      padding:1rem;
-      border-radius:6px;
-      margin-top:0.5rem;
-    }
-
-    .lightgray-btn {
-      background:#dcdcdc;
-      color:#333;
-      border:none;
-      border-radius:6px;
-      padding:1rem;
-      width:100%;
-      margin-top:1rem;
-      cursor:pointer;
-    }
-    .lightgray-btn:hover {
-      background:#cfcfcf;
     }
   </style>
 </head>
-
 <body>
 
-<div class="container" id="quizScreen">
-  <p id="progress"></p>
-  <h2 id="questionText"></h2>
+<div class="container">
+  <h2>ウデ試しモード</h2>
 
-  <div id="options"></div>
+  <!-- 科目選択 -->
+  <select id="subject">
+    <option value="">科目を選択</option>
+  </select>
 
-  <div id="judgeText" style="display:none;"></div>
+  <!-- 項目一覧（チェックボックス） -->
+  <div id="chapterList"></div>
 
-  <div id="explanation"></div>
+  <!-- 出題数入力 -->
+  <input id="questionCount" type="number" min="1" max="200"
+         placeholder="出題数を入力（半角数字）">
 
-  <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
-</div>
-
-<div class="container" id="resultScreen" style="display:none;">
-  <h2 style="text-align:center;">結果</h2>
-  <p id="scoreText"></p>
-
-  <button class="lightgray-btn" onclick="location.href='udetest.html'">
-    ウデ試しに戻る
-  </button>
-
-  <button class="lightgray-btn" onclick="location.href='mode.html'">
-    トップに戻る
-  </button>
+  <button onclick="startTest()">開始</button>
+  <button onclick="location.href='mode.html'" style="background:#6c757d;">戻る</button>
 </div>
 
 <script>
   let quizData = [];
-  let questions = [];
-  let index = 0;
-  let correct = 0;
 
-  const subject = localStorage.getItem("udetest_subject");
-  const chapters = JSON.parse(localStorage.getItem("udetest_chapters"));
-
-  /* キャラ画像プリロード */
-  const perfectImages = [
-    "ushiro_harimijikai_gray_ikume_.png",
-    "01harimijikai_grau_ikume.png",
-    "陸上イクメちゃん.png",
-    "帽子なし野球ユニフォーム.png"
+  const subjectOrder = [
+    "医療概論","公衆衛生学","関係法規","解剖学","生理学","病理学",
+    "臨床医学総論","臨床医学各論","リハビリテーション医学",
+    "東洋医学概論","経絡経穴概論","東洋医学臨床論","はり理論","きゅう理論"
   ];
 
-  const preloadedImages = [];
-  perfectImages.forEach(src => {
-    const img = new Image();
-    img.src = src;
-    preloadedImages.push(img);
-  });
+  window.onload = () => {
+    fetch("quizzes.json")
+      .then(res => res.json())
+      .then(data => {
+        quizData = data;
+        populateSubjects();
+      });
+  };
 
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    return arr;
-  }
+  function populateSubjects() {
+    const subjectSelect = document.getElementById("subject");
+    let subjects = [...new Set(quizData.map(q => q.subject))];
 
-  fetch("quizzes.json")
-    .then(res=>res.json())
-    .then(data=>{
-      quizData = data;
+    subjects.sort((a,b)=>subjectOrder.indexOf(a)-subjectOrder.indexOf(b));
 
-      let pool = quizData.filter(q =>
-        q.subject === subject && chapters.includes(q.chapter)
-      );
-
-      shuffle(pool);
-
-      /* 🔥 ここが今回の重要ポイント：ユーザー入力の問題数を取得 */
-      const count = Number(localStorage.getItem("udetest_count")) || 15;
-
-      questions = pool.slice(0, count);
-
-      showQuestion();
+    subjects.forEach(sub=>{
+      const op=document.createElement("option");
+      op.value=sub;
+      op.textContent=sub;
+      subjectSelect.appendChild(op);
     });
 
-  function showQuestion() {
-    const q = questions[index];
+    subjectSelect.addEventListener("change", populateChapters);
+  }
 
-    document.getElementById("progress").textContent =
-      `第${index+1}問 / 全${questions.length}問`;
+  function populateChapters() {
+    const subject = document.getElementById("subject").value;
+    const chapterList = document.getElementById("chapterList");
+    chapterList.innerHTML = "";
 
-    document.getElementById("questionText").textContent = q.question;
+    if (!subject) return;
 
-    document.getElementById("judgeText").style.display = "none";
+    let chapters = [
+      ...new Set(
+        quizData.filter(q=>q.subject===subject).map(q=>q.chapter)
+      )
+    ];
 
-    const optDiv = document.getElementById("options");
-    optDiv.innerHTML = "";
+    chapters.sort();
 
-    q.options.forEach((opt,i)=>{
-      const btn=document.createElement("button");
-      btn.className="option";
-      btn.textContent=opt;
-      btn.onclick=()=>checkAnswer(i);
-      optDiv.appendChild(btn);
+    chapters.forEach(ch=>{
+      const div=document.createElement("div");
+      div.className="checkbox-item";
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${ch}"> ${ch}
+        </label>
+      `;
+      chapterList.appendChild(div);
     });
-
-    document.getElementById("explanation").style.display="none";
-    document.getElementById("nextBtn").style.display="none";
   }
 
-  /* 正解＝赤、不正解＝青（正解だけ青） */
-  function checkAnswer(i){
-    const q = questions[index];
-    const btns = document.querySelectorAll(".option");
+  function startTest() {
+    const subject = document.getElementById("subject").value;
+    const checks = [...document.querySelectorAll("#chapterList input:checked")];
+    const count = Number(document.getElementById("questionCount").value);
 
-    btns.forEach(btn => btn.disabled = true);
-
-    const judge = document.getElementById("judgeText");
-
-    if(i === q.correctIndex){
-      correct++;
-      btns[q.correctIndex].classList.add("correct");
-      judge.textContent = "正解！";
-      judge.className = "correctText";
-    } else {
-      btns[q.correctIndex].classList.add("wrong");
-      judge.textContent = "不正解…";
-      judge.className = "wrongText";
-    }
-
-    judge.style.display = "block";
-
-    const exp=document.getElementById("explanation");
-    exp.innerHTML=q.explanation;
-    exp.style.display="block";
-
-    document.getElementById("nextBtn").style.display="block";
-  }
-
-  function nextQuestion(){
-    index++;
-    if(index>=questions.length){
-      showResult();
+    if (!subject || checks.length===0) {
+      alert("科目と項目を選択してください。");
       return;
     }
-    showQuestion();
-  }
 
-  function showResult(){
-    document.getElementById("quizScreen").style.display="none";
-    const resultScreen = document.getElementById("resultScreen");
-    resultScreen.style.display="block";
-
-    const rate = Math.round((correct/questions.length)*100);
-    document.getElementById("scoreText").textContent =
-      `正解数：${correct} / ${questions.length}（正答率：${rate}%）`;
-
-    const oldImg = document.getElementById("perfectImg");
-    if (oldImg) oldImg.remove();
-
-    const oldMsg = document.getElementById("perfectMsg");
-    if (oldMsg) oldMsg.remove();
-
-    resultScreen.style.background = "white";
-
-    if(rate === 100){
-
-      resultScreen.style.background = "#fff8d6";
-
-      const randomImg = perfectImages[Math.floor(Math.random() * perfectImages.length)];
-
-      const img = document.createElement("img");
-      img.id = "perfectImg";
-      img.src = randomImg;
-      img.style.width = "100%";
-      img.style.maxWidth = "130px";
-      img.style.display = "block";
-      img.style.margin = "0 auto 1rem auto";
-      resultScreen.insertBefore(img, resultScreen.firstChild);
-
-      const msg = document.createElement("div");
-      msg.id = "perfectMsg";
-      msg.textContent = "Very Good!";
-      msg.style.textAlign = "center";
-      msg.style.fontSize = "1.4rem";
-      msg.style.fontWeight = "bold";
-      msg.style.color = "#d9534f";
-      msg.style.marginBottom = "1rem";
-      resultScreen.insertBefore(msg, document.getElementById("scoreText"));
+    if (!count || count < 1) {
+      alert("出題数を半角数字で入力してください。");
+      return;
     }
+
+    const selectedChapters = checks.map(c=>c.value);
+
+    localStorage.setItem("udetest_subject", subject);
+    localStorage.setItem("udetest_chapters", JSON.stringify(selectedChapters));
+    localStorage.setItem("udetest_count", count);
+
+    location.href = "quiz_udetest.html";
   }
 </script>
 
