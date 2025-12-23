@@ -41,16 +41,15 @@
       background:#0056b3;
     }
 
-    /* ✅ テキストと☐を1行で自然に並べ、高さも揃える */
+    /* ✅ テキストと☐を完全に隣接させる（スペースゼロ） */
     .checkbox-item {
       margin-bottom:0.7rem;
     }
     .chapter-label {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 1rem;
       white-space: nowrap;
+      font-size: 1rem;
     }
     .chapter-label input[type="checkbox"] {
       margin: 0;
@@ -63,15 +62,12 @@
 <div class="container">
   <h2>ウデ試しモード</h2>
 
-  <!-- 科目選択 -->
   <select id="subject">
     <option value="">科目を選択</option>
   </select>
 
-  <!-- 項目一覧（1行でテキスト→☐） -->
   <div id="chapterList"></div>
 
-  <!-- 出題数入力 -->
   <input id="questionCount" type="number" min="1" max="200"
          placeholder="出題数を入力（半角数字）">
 
@@ -133,8 +129,7 @@
       div.className="checkbox-item";
       div.innerHTML = `
         <label class="chapter-label">
-          ${ch}
-          <input type="checkbox" value="${ch}">
+          ${ch}<input type="checkbox" value="${ch}">
         </label>
       `;
       chapterList.appendChild(div);
