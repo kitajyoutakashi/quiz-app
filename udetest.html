@@ -47,16 +47,21 @@
     }
 
     .checkbox-item {
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.9rem;
     }
 
-    /* 🔹 テキストと☐を「同一テキスト行」として扱う */
+    /* 🔹 テキストは自然に折り返し */
     .chapter-label {
-      display: inline;
+      display: block;
       font-size: 1rem;
       line-height: 1.6;
       word-break: break-word;
       cursor: pointer;
+    }
+
+    /* 🔑 テキスト末尾と☐を絶対に分離させない */
+    .checkbox-wrap {
+      white-space: nowrap;
     }
 
     .chapter-label input[type="checkbox"] {
@@ -142,7 +147,10 @@
       div.className = "checkbox-item";
       div.innerHTML = `
         <label class="chapter-label">
-          ${ch}<input type="checkbox" value="${ch}">
+          ${ch}
+          <span class="checkbox-wrap">
+            <input type="checkbox" value="${ch}">
+          </span>
         </label>
       `;
       chapterList.appendChild(div);
