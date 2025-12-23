@@ -50,23 +50,18 @@
       margin-bottom: 0.9rem;
     }
 
-    /* 🔹 テキストは自然に折り返し */
-    .chapter-label {
-      display: block;
+    /* 🔥 テキストと☐を同じインライン要素に入れる */
+    .chapter-inline {
       font-size: 1rem;
       line-height: 1.6;
       word-break: break-word;
-      cursor: pointer;
+      white-space: normal;
     }
 
-    /* 🔑 テキスト末尾と☐を絶対に分離させない */
-    .checkbox-wrap {
-      white-space: nowrap;
-    }
-
-    .chapter-label input[type="checkbox"] {
-      margin-left: 0.4rem;
+    .chapter-inline input[type="checkbox"] {
+      margin-left: 0.3rem;
       vertical-align: middle;
+      transform: translateY(1px);
     }
   </style>
 </head>
@@ -145,14 +140,11 @@
     chapters.forEach(ch => {
       const div = document.createElement("div");
       div.className = "checkbox-item";
-      div.innerHTML = `
-        <label class="chapter-label">
-          ${ch}
-          <span class="checkbox-wrap">
-            <input type="checkbox" value="${ch}">
-          </span>
-        </label>
-      `;
+
+      /* 🔥 テキストと☐を同じ span に入れる（これが唯一の正解） */
+      div.innerHTML =
+        `<span class="chapter-inline">${ch}<input type="checkbox" value="${ch}"></span>`;
+
       chapterList.appendChild(div);
     });
   }
