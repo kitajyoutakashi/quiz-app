@@ -59,13 +59,6 @@
     .back-btn:hover {
       background-color: #545b62;
     }
-
-    #history {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 1rem;
-      min-height: 1.2rem;
-    }
   </style>
 </head>
 <body>
@@ -81,7 +74,7 @@
     <option value="">項目を選択</option>
   </select>
 
-  <p id="history"></p>
+  <!-- 🔥 中央の履歴表示は完全削除 -->
 
   <button onclick="startQuiz()">学習を開始</button>
   <button class="back-btn" onclick="location.href='mode.html'">戻る</button>
@@ -155,10 +148,8 @@
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterSelect = document.getElementById("chapter");
-    const history = document.getElementById("history");
 
     chapterSelect.innerHTML = "<option value=''>項目を選択</option>";
-    history.textContent = "";
 
     let chapters = [
       ...new Set(
@@ -174,7 +165,7 @@
       return a.localeCompare(b, "ja");
     });
 
-    // 🔥 プルダウンに履歴を表示する部分（完全版）
+    // 🔥 プルダウンに履歴を表示（中央表示は廃止）
     chapters.forEach(ch => {
       const option = document.createElement("option");
       option.value = ch;
@@ -192,32 +183,6 @@
 
       chapterSelect.appendChild(option);
     });
-
-    chapterSelect.addEventListener("change", showHistory);
-  }
-
-  function showHistory() {
-    const subject = document.getElementById("subject").value;
-    const chapter = document.getElementById("chapter").value;
-    const history = document.getElementById("history");
-
-    if (!subject || !chapter) {
-      history.textContent = "";
-      return;
-    }
-
-    const keyBase = `${subject}_${chapter}`;
-
-    const date = localStorage.getItem(`lastDate_${keyBase}`);
-    const rate = localStorage.getItem(`lastRate_${keyBase}`);
-    const count = localStorage.getItem(`lastCount_${keyBase}`);
-
-    if (date && rate && count) {
-      history.textContent =
-        `最終実施日：${date}　正答率：${rate}%　実施回数：${count}回`;
-    } else {
-      history.textContent = "この項目の履歴はありません。";
-    }
   }
 
   function startQuiz() {
