@@ -41,19 +41,19 @@
       background:#0056b3;
     }
 
-    /* ✅ テキストと☐を完全に隣接させる（スペースゼロ） */
+    /* テキストと☐を完全に隣接させる */
     .checkbox-item {
       margin-bottom:0.7rem;
     }
     .chapter-label {
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-      font-size: 1rem;
+      display:inline-flex;
+      align-items:center;
+      white-space:nowrap;
+      font-size:1rem;
     }
     .chapter-label input[type="checkbox"] {
-      margin: 0;
-      transform: translateY(1px);
+      margin:0;
+      transform:translateY(1px);
     }
   </style>
 </head>
@@ -127,11 +127,8 @@
     chapters.forEach(ch=>{
       const div=document.createElement("div");
       div.className="checkbox-item";
-      div.innerHTML = `
-        <label class="chapter-label">
-          ${ch}<input type="checkbox" value="${ch}">
-        </label>
-      `;
+      div.innerHTML =
+        `<label class="chapter-label">${ch}<input type="checkbox" value="${ch}"></label>`;
       chapterList.appendChild(div);
     });
   }
