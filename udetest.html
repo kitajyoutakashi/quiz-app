@@ -41,19 +41,20 @@
       background:#0056b3;
     }
 
-    /* テキストと☐を完全に隣接させる */
+    /* 🔥 テキストは折り返しOK、☐はテキストにぴったり */
     .checkbox-item {
       margin-bottom:0.7rem;
     }
     .chapter-label {
-      display:inline-flex;
-      align-items:center;
-      white-space:nowrap;
+      display:inline;          /* ← テキストと同じ扱いにする */
       font-size:1rem;
+      white-space:normal;      /* ← 折り返しを許可 */
+      word-break:break-word;   /* ← 長い語も折り返す */
     }
     .chapter-label input[type="checkbox"] {
-      margin:0;
-      transform:translateY(1px);
+      margin-left:0.2rem;      /* テキストと☐の最小距離 */
+      vertical-align:middle;   /* 高さ揃え */
+      transform:translateY(1px); /* 微調整 */
     }
   </style>
 </head>
@@ -62,12 +63,15 @@
 <div class="container">
   <h2>ウデ試しモード</h2>
 
+  <!-- 科目選択 -->
   <select id="subject">
     <option value="">科目を選択</option>
   </select>
 
+  <!-- 項目一覧（テキスト→☐） -->
   <div id="chapterList"></div>
 
+  <!-- 出題数入力 -->
   <input id="questionCount" type="number" min="1" max="200"
          placeholder="出題数を入力（半角数字）">
 
