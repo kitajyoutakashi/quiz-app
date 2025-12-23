@@ -41,17 +41,16 @@
       background:#0056b3;
     }
 
-    /* 🔥 テキスト → 改行 → 中央揃えチェックボックス */
+    /* 🔥 テキスト → チェックボックス（1行） */
     .checkbox-item {
-      margin-bottom:1rem;
-      text-align:left;
+      margin-bottom:0.7rem;
     }
-    .chapter-text {
+    .chapter-label {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      width:100%;
       font-size:1rem;
-      margin-bottom:4px;
-    }
-    .chapter-check {
-      text-align:center;
     }
   </style>
 </head>
@@ -65,7 +64,7 @@
     <option value="">科目を選択</option>
   </select>
 
-  <!-- 項目一覧（テキスト → 改行 → チェックボックス） -->
+  <!-- 項目一覧（1行でテキスト→チェックボックス） -->
   <div id="chapterList"></div>
 
   <!-- 出題数入力 -->
@@ -111,7 +110,7 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
-  /* 項目一覧（テキスト → 改行 → チェックボックス） */
+  /* 項目一覧（1行でテキスト→チェックボックス） */
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterList = document.getElementById("chapterList");
@@ -131,10 +130,10 @@
       const div=document.createElement("div");
       div.className="checkbox-item";
       div.innerHTML = `
-        <div class="chapter-text">${ch}</div>
-        <div class="chapter-check">
+        <label class="chapter-label">
+          ${ch}
           <input type="checkbox" value="${ch}">
-        </div>
+        </label>
       `;
       chapterList.appendChild(div);
     });
