@@ -4,62 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ウデ試しモード</title>
+
   <style>
     body {
       font-family: sans-serif;
-      background:#f5f5f5;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      margin:0;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
+
     .container {
-      background:white;
-      padding:2rem;
-      border-radius:12px;
-      width:90%;
-      max-width:420px;
-      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     select, button, input {
-      width:100%;
-      padding:1rem;
-      margin-bottom:1rem;
-      border-radius:6px;
-      border:1px solid #ccc;
-      font-size:1rem;
-      box-sizing:border-box;
-    }
-    button {
-      background:#007bff;
-      color:white;
-      border:none;
-      cursor:pointer;
-    }
-    button:hover {
-      background:#0056b3;
-    }
-
-    /* 🔥 テキストと☐をインラインで並べる（これが最重要） */
-    .checkbox-item {
-      margin-bottom:0.7rem;
-    }
-
-    .chapter-label {
-      display: inline;             /* ← インラインで並べる */
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
       font-size: 1rem;
-      white-space: normal;         /* ← 折り返しOK */
-      word-break: break-word;      /* ← 長い語も折り返す */
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .checkbox-item {
+      margin-bottom: 0.8rem;
+    }
+
+    /* 🔹 テキストと☐を「同一テキスト行」として扱う */
+    .chapter-label {
+      display: inline;
+      font-size: 1rem;
+      line-height: 1.6;
+      word-break: break-word;
+      cursor: pointer;
     }
 
     .chapter-label input[type="checkbox"] {
-      margin-left: 0.2rem;         /* テキストと☐の最小距離 */
-      vertical-align: middle;      /* 高さ揃え */
-      transform: translateY(1px);  /* 微調整 */
+      margin-left: 0.4rem;
+      vertical-align: middle;
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -100,12 +106,14 @@
     const subjectSelect = document.getElementById("subject");
     let subjects = [...new Set(quizData.map(q => q.subject))];
 
-    subjects.sort((a,b)=>subjectOrder.indexOf(a)-subjectOrder.indexOf(b));
+    subjects.sort((a, b) =>
+      subjectOrder.indexOf(a) - subjectOrder.indexOf(b)
+    );
 
-    subjects.forEach(sub=>{
-      const op=document.createElement("option");
-      op.value=sub;
-      op.textContent=sub;
+    subjects.forEach(sub => {
+      const op = document.createElement("option");
+      op.value = sub;
+      op.textContent = sub;
       subjectSelect.appendChild(op);
     });
 
@@ -121,19 +129,22 @@
 
     let chapters = [
       ...new Set(
-        quizData.filter(q=>q.subject===subject).map(q=>q.chapter)
+        quizData
+          .filter(q => q.subject === subject)
+          .map(q => q.chapter)
       )
     ];
 
     chapters.sort();
 
-    chapters.forEach(ch=>{
-      const div=document.createElement("div");
-      div.className="checkbox-item";
-
-      /* ← 改行禁止！1行で書くのが最重要ポイント */
-      div.innerHTML = `<label class="chapter-label">${ch}<input type="checkbox" value="${ch}"></label>`;
-
+    chapters.forEach(ch => {
+      const div = document.createElement("div");
+      div.className = "checkbox-item";
+      div.innerHTML = `
+        <label class="chapter-label">
+          ${ch}<input type="checkbox" value="${ch}">
+        </label>
+      `;
       chapterList.appendChild(div);
     });
   }
@@ -143,7 +154,7 @@
     const checks = [...document.querySelectorAll("#chapterList input:checked")];
     const count = Number(document.getElementById("questionCount").value);
 
-    if (!subject || checks.length===0) {
+    if (!subject || checks.length === 0) {
       alert("科目と項目を選択してください。");
       return;
     }
@@ -153,7 +164,7 @@
       return;
     }
 
-    const selectedChapters = checks.map(c=>c.value);
+    const selectedChapters = checks.map(c => c.value);
 
     localStorage.setItem("udetest_subject", subject);
     localStorage.setItem("udetest_chapters", JSON.stringify(selectedChapters));
