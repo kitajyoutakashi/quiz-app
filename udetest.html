@@ -41,16 +41,19 @@
       background:#0056b3;
     }
 
-    /* 🔥 テキストとチェックを完全に1行で並べる */
+    /* ✅ テキストと☐を1行で自然に並べ、高さも揃える */
     .checkbox-item {
       margin-bottom:0.7rem;
     }
     .chapter-label {
       display:inline-flex;
       align-items:center;
-      gap:0.5rem; /* テキストと☐の間の最小スペース */
-      white-space:nowrap; /* 改行禁止 */
+      gap:0.5rem;
+      white-space:nowrap;
       font-size:1rem;
+    }
+    .chapter-label input[type="checkbox"] {
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -64,7 +67,7 @@
     <option value="">科目を選択</option>
   </select>
 
-  <!-- 項目一覧（テキスト→☐ を1行で表示） -->
+  <!-- 項目一覧（1行でテキスト→☐） -->
   <div id="chapterList"></div>
 
   <!-- 出題数入力 -->
@@ -93,7 +96,6 @@
       });
   };
 
-  /* 科目一覧を生成 */
   function populateSubjects() {
     const subjectSelect = document.getElementById("subject");
     let subjects = [...new Set(quizData.map(q => q.subject))];
@@ -110,7 +112,6 @@
     subjectSelect.addEventListener("change", populateChapters);
   }
 
-  /* 項目一覧（テキスト→☐ を1行で表示） */
   function populateChapters() {
     const subject = document.getElementById("subject").value;
     const chapterList = document.getElementById("chapterList");
@@ -139,7 +140,6 @@
     });
   }
 
-  /* 開始ボタン押下 */
   function startTest() {
     const subject = document.getElementById("subject").value;
     const checks = [...document.querySelectorAll("#chapterList input:checked")];
