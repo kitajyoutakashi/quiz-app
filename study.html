@@ -74,8 +74,6 @@
     <option value="">項目を選択</option>
   </select>
 
-  <!-- 🔥 中央の履歴表示は完全削除 -->
-
   <button onclick="startQuiz()">学習を開始</button>
   <button class="back-btn" onclick="location.href='mode.html'">戻る</button>
 </div>
@@ -96,6 +94,7 @@
       return;
     }
 
+    // 🔥 前回の続きがある場合の処理
     const lastSubject = localStorage.getItem("lastSubject");
     const lastChapter = localStorage.getItem("lastChapter");
     const lastIndex = localStorage.getItem("lastIndex");
@@ -112,6 +111,7 @@
         window.location.href = "quiz.html";
         return;
       } else {
+        // 🔥 キャンセル時：途中データを完全削除
         localStorage.removeItem("lastSubject");
         localStorage.removeItem("lastChapter");
         localStorage.removeItem("lastIndex");
@@ -165,7 +165,7 @@
       return a.localeCompare(b, "ja");
     });
 
-    // 🔥 プルダウンに履歴を表示（中央表示は廃止）
+    // 🔥 プルダウンに履歴を表示
     chapters.forEach(ch => {
       const option = document.createElement("option");
       option.value = ch;
@@ -193,6 +193,13 @@
       alert("科目と項目を選択してください。");
       return;
     }
+
+    // 🔥 別の項目を開始する前に途中データを完全削除
+    localStorage.removeItem("lastSubject");
+    localStorage.removeItem("lastChapter");
+    localStorage.removeItem("lastIndex");
+    localStorage.removeItem("lastCorrectCount");
+    localStorage.removeItem("questionOrder");
 
     localStorage.setItem("subject", subject);
     localStorage.setItem("chapter", chapter);
